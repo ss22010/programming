@@ -1,1 +1,20 @@
+cost = 0
+includes = []
+bedrooms = 0 
+kitchen_fit = []
+
+class Products:
+
+    def initial_package(cost, includes, bedrooms, kitchen_fit):
+        cost += 75000
+        bedrooms += 2
+        kitchen_fit += 'standard'
+        includes += ['washing machine', 'dishwasher', 'living room', 'double glazed windows', 'insulated to NZ standards']
+
+
+ask = input("Would you like to order the standard package? ")
+if ask == "yes":
+    initial_package(cost, includes, bedrooms, kitchen_fit)
+    
+    
 
