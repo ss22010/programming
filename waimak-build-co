@@ -34,9 +34,27 @@ BATHROOM = {
 }
 KITCHEN = {
     'options': [
-        {"type": "default", "fit": "Standard Fit", "Cost": 0},
-        {"type": "Option_A", "fit": "Upgraded fit", "Cost": 2000},
-        {"type": "Option_B", }
+        {"type": "default", "fit": "Standard Fit", "Cost": 0, "includes": ["Space for Standard Washing Machine/Dishwasher", "Standard Units", "Standard Benchtop"]},
+        {"type": "Option_A", "fit": "Upgraded Fit", "Cost": 2000, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop"]},
+        {"type": "Option_B", "fit": "Plus Induction Fit", "Cost": 3500, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop", "Plus Induction Units"]},
+        {"type": "Option_C", "fit": "Plus Deluxe Fit", "Cost": 6000, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop", "Plus Induction Units", "Plus Deluxe Units"]},
     ]
-
 }
+LIVING_ROOM = {
+    'add_ons': [
+        {"includes": "Default Add-ons", "Cost": 0,},
+        {"includes": "TV point plus rof mounted aerial", "Cost": 250},
+        {"includes": "TV point plus satellite dish", "Cost": 250},
+        {"includes": "4.5KW heat pump", "Cost": 2500}
+    ]
+}
+MISCELLANEOUS = {
+    'add_ons': [
+        {"includes": "2.5KW heat pump", "Cost": 1800, "Where": "Bedroom"},
+        {"includes": "Additional electrical sockets (1G)", "Cost": 40},
+        {"includes": "Additional electrical sockets (2G)", "Cost": 50},
+        {"includes": "Additional network points", "Cost": 50, "requires": "Addition of loft mounted 8 port 10/100/1000 network switch", "additional_cost": 100}
+    ]
+}
+
+
