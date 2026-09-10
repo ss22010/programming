@@ -18,43 +18,61 @@ STANDARD_PACKAGE_COST = 75000
 
 BATHROOM = {
     'tiles': [
-        {"type": "Default Tiles", "Cost": 0, "style": "Checkered Pattern", "color": "White and Black"},
-        {"type": "Premium Tiles", "Cost": 2500, "style": "Marble Pattern", "color": "White and Grey"},
-        {"type": "Luxury Tiles", "Cost": 2500, "style": "Mosaic Pattern", "color": "Multicolor"}
+        {"includes": "Default Tiles", "cost": 0, "style": "Checkered Pattern", "color": "White and Black"},
+        {"includes": "Premium Tiles", "cost": 2500, "style": "Marble Pattern", "color": "White and Grey"},
+        {"includes": "Luxury Tiles", "cost": 2500, "style": "Mosaic Pattern", "color": "Multicolor"}
     ],
     'bath': [
-        {"type": "Default Bath", "Cost": 0, "add_shower": False},
-        {"type": "Spa Bath", "Cost": 2500, "add_shower": False}
+        {"includes": "Default Bath", "cost": 0, "add_shower": False},
+        {"includes": "Spa Bath", "cost": 2500, "add_shower": False}
     ],
     'tapware': [
-        {"type": "Default Tapware", "Cost": 0, "style": "Chrome Finish"},
-        {"type": "Premium Tapware", "Cost": 2500, "style": "Brushed Nickel Finish"},
-        {"type": "Luxury Tapware", "Cost": 2500, "style": "Gold Finish"}
+        {"includes": "Default Tapware", "cost": 0, "style": "Chrome Finish"},
+        {"includes": "Premium Tapware", "cost": 2500, "style": "Brushed Nickel Finish"},
+        {"includes": "Luxury Tapware", "cost": 2500, "style": "Gold Finish"}
     ]
 }
 KITCHEN = {
     'options': [
-        {"type": "default", "fit": "Standard Fit", "Cost": 0, "includes": ["Space for Standard Washing Machine/Dishwasher", "Standard Units", "Standard Benchtop"]},
-        {"type": "Option_A", "fit": "Upgraded Fit", "Cost": 2000, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop"]},
-        {"type": "Option_B", "fit": "Plus Induction Fit", "Cost": 3500, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop", "Plus Induction Units"]},
-        {"type": "Option_C", "fit": "Plus Deluxe Fit", "Cost": 6000, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop", "Plus Induction Units", "Plus Deluxe Units"]},
+        {"includes": "default", "fit": "Standard Fit", "cost": 0, "includes": ["Space for Standard Washing Machine/Dishwasher", "Standard Units", "Standard Benchtop"]},
+        {"includes": "Option_A", "fit": "Upgraded Fit", "cost": 2000, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop"]},
+        {"includes": "Option_B", "fit": "Plus Induction Fit", "cost": 3500, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop", "Plus Induction Units"]},
+        {"includes": "Option_C", "fit": "Plus Deluxe Fit", "cost": 6000, "includes": ["Space for Standard Washing Machine/Dishwasher", "Upgraded Units", "Upgraded Benchtop", "Plus Induction Units", "Plus Deluxe Units"]},
     ]
 }
 LIVING_ROOM = {
     'add_ons': [
-        {"includes": "Default Add-ons", "Cost": 0,},
-        {"includes": "TV point plus rof mounted aerial", "Cost": 250},
-        {"includes": "TV point plus satellite dish", "Cost": 250},
-        {"includes": "4.5KW heat pump", "Cost": 2500}
+        {"includes": "Default Add-ons", "cost": 0,},
+        {"includes": "TV point plus rof mounted aerial", "cost": 250},
+        {"includes": "TV point plus satellite dish", "cost": 250},
+        {"includes": "4.5KW heat pump", "cost": 2500}
     ]
 }
 MISCELLANEOUS = {
     'add_ons': [
-        {"includes": "2.5KW heat pump", "Cost": 1800, "Where": "Bedroom"},
-        {"includes": "Additional electrical sockets (1G)", "Cost": 40},
-        {"includes": "Additional electrical sockets (2G)", "Cost": 50},
-        {"includes": "Additional network points", "Cost": 50, "requires": "Addition of loft mounted 8 port 10/100/1000 network switch", "additional_cost": 100}
+        {"includes": "2.5KW heat pump", "cost": 1800, "Where": "Bedroom"},
+        {"includes": "Additional electrical sockets (1G)", "cost": 40},
+        {"includes": "Additional electrical sockets (2G)", "cost": 50},
+        {"includes": "Additional network points", "cost": 50, "requires": "Addition of loft mounted 8 port 10/100/1000 network switch", "additional_cost": 100}
     ]
 }
 
 
+class OrderError(ValueError):
+    """Raised when an order is invalid."""
+
+@dataclass(frozen=True)
+class PackageOptions: 
+    """gives the options names"""
+    tiles: str
+    bath: str
+    tapware: str
+    options: str
+    add_ons: str
+    cost: float
+
+
+
+
+@dataclass
+class Package:
