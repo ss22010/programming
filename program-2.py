@@ -1,26 +1,23 @@
 import tkinter as tk
+from tkinter import ttk
 
 # initial layout for the grids inside the grid 
 class Layout():
-    def __init__(self, contain, i, j, text="?"):
-        self.text = tk.StringVar(contain, value=text)
-        self.image = tk.PhotoImage(file="image.png")
-        self.image.grid(row=i, column=j, sticky='nsew', pady=1, padx=1)
-        self.label = tk.Label(contain, textvariable=self.text, image=self.image, compound="top")
-        self.label.grid(row=i, column=j)
-        self.row = i
-        self.col = j
+    def __init__(self, card, root, bottom, button, row, col):
+        self.card = tk.Frame(root, bg="white", bd=1, relief="solid")
+        self.card.grid(row=row, column=col, padx=15, pady=15)
+        self.image = tk.Frame(card, bg="blue", width=200, height=120).pack().pack_propagate(False)
+        self.bottom = tk.Frame(card, bg="blue", width=200, height=100).pack().pack_propagate(False)
+        self.text = tk.Label(bottom, text="Lorem ipsium", bg="white", justify="left").pack(side="left", padx=10)
+        self.button = tk.Frame(bottom, bg="white").pack(side="right", padx=5)
+        self.button = tk.Button(button, text="+", width=2).pack(pady=3)
 
 root = tk.Tk()
 
-for outer_row in range(2):
-    for outer_col in range(4):
-        f = tk.Frame(root)
-        f.grid(row=outer_row, column=outer_col, sticky='nsew', padx=20, pady=20)
-
-        for inner_row in range(1):
-            for inner_col in range(1):
-                layout = Layout(f, inner_row, inner_col, text=f"Grid {outer_row},{outer_col} - Cell {inner_row},{inner_col}")
+for row in range(2):
+    for col in range(4):
+        
+        Layout()
 
 
 root.mainloop()
