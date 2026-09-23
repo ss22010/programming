@@ -3,6 +3,41 @@ from tkinter import *
 from builtins import range
 import customtkinter as ctk
 
+heat_pump = 0
+sockets_1g = 1
+sockets_2g = 0
+network_pts = 2 
+    
+
+TEXT = {
+    "kitchen": [
+        "Option A: Upgrades units and worktop",
+        "Option B: As A plus induction hob",
+        "Option C: As A plus Deluxe appliance pack"
+    ],
+    "bathroom": [
+        "Tiles",
+        "Spa Bath",
+        "Shower",
+        "Tapware"
+    ],
+    "living room": [
+        "TV point plus roof mounted aerial",
+        "TV point plus satellite dish",
+        "4.5 KW Heat pump"
+    ],
+    "other": "hello"
+}
+CARD_TYPES = [
+    "kitchen",
+    "bathroom",
+    "living room",
+    "other",
+    "other",
+    "other",
+    "other",
+    "other"
+]
 
 class Layout():
     def __init__(self, root):
@@ -53,17 +88,20 @@ class Layout():
             container.rowconfigure(row, weight=1)
 
         for row in range(2):
-            container.rowconfigure(row, weight=1)
-
-        for row in range(2):
             for column in range(4):
 
-                card = self.create_card(container)
+                index = row * 4 + column
 
+                card_type = CARD_TYPES[index]
+
+                card = self.create_card(container, card_type)
                 card.grid(row=row, column=column, padx=10, pady=10, sticky="nsew")
+                
+        return index
 
-    def create_card(self, parent):
+    def create_card(self, parent, card_type):
 
+        text_content = TEXT[card_type]
         card = ctk.CTkFrame(parent, fg_color="pink", corner_radius=18)
 
         image = ctk.CTkFrame(card, fg_color="blue")
@@ -74,7 +112,7 @@ class Layout():
         bottom = ctk.CTkFrame(card, fg_color="purple")
         bottom.pack(fill="both", expand="True", padx=12, pady=12)
 
-        text = ctk.CTkLabel(bottom, text=("lorem ipsum dolor sit amet consectetur adipiscing elit laboris quibusdam facilis duis dolor iusto esse commodo quibusdam eligendi sed iusto corrupti excepteur aute quis reprehenderit blanditiis cupiditate repellendus"), fg_color="yellow", text_color="black", justify="left", anchor="nw", pady=10, padx=10, wraplength=190)
+        text = ctk.CTkLabel(bottom, text=text_content, fg_color="yellow", text_color="black", justify="left", anchor="nw", pady=10, padx=10, wraplength=190)
         text.pack(side="left", fill="both", expand=True)
 
         buttons = ctk.CTkFrame(bottom, fg_color="orange")
@@ -88,6 +126,17 @@ class Layout():
 
         return card
     
+class LayoutFunction():
+    def __init__(self, index, card):
+        self.index = index
+        self.card = card
+
+    def create_text(card, TEXT):
+        for c in card:
+            print(TEXT[0])
+
+    
+
 
 
 root = tk.Tk()
