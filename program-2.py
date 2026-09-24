@@ -3,11 +3,10 @@ from tkinter import *
 from builtins import range
 import customtkinter as ctk
 
+oneG = 1
+twoG = 0
 heat_pump = 0
-sockets_1g = 1
-sockets_2g = 0
-network_pts = 2 
-    
+network_pts = 2
 
 TEXT = {
     "kitchen": [
@@ -15,29 +14,29 @@ TEXT = {
         "Option B: As A plus induction hob",
         "Option C: As A plus Deluxe appliance pack"
     ],
+
     "bathroom": [
         "Tiles",
         "Spa Bath",
         "Shower",
         "Tapware"
     ],
+
     "living room": [
         "TV point plus roof mounted aerial",
         "TV point plus satellite dish",
         "4.5 KW Heat pump"
     ],
-    "other": "hello"
+
+    "sockets": [
+        {"1g": oneG},
+        {"2g": twoG}
+    ],
+
+    "heat_pump": heat_pump,
+    "network_pts": network_pts
 }
-CARD_TYPES = [
-    "kitchen",
-    "bathroom",
-    "living room",
-    "other",
-    "other",
-    "other",
-    "other",
-    "other"
-]
+
 
 class Layout():
     def __init__(self, root):
@@ -81,6 +80,7 @@ class Layout():
         container = tk.Frame(self.root, bg="white")
         container.pack(expand=True, fill="both", padx=30, pady=30)
 
+        
         for column in range(4):
             container.columnconfigure(column, weight=1)
 
@@ -92,16 +92,14 @@ class Layout():
 
                 index = row * 4 + column
 
-                card_type = CARD_TYPES[index]
 
-                card = self.create_card(container, card_type)
+                card = self.create_card(container, card_type=index)
                 card.grid(row=row, column=column, padx=10, pady=10, sticky="nsew")
                 
         return index
 
     def create_card(self, parent, card_type):
 
-        text_content = TEXT[card_type]
         card = ctk.CTkFrame(parent, fg_color="pink", corner_radius=18)
 
         image = ctk.CTkFrame(card, fg_color="blue")
@@ -112,32 +110,29 @@ class Layout():
         bottom = ctk.CTkFrame(card, fg_color="purple")
         bottom.pack(fill="both", expand="True", padx=12, pady=12)
 
-        text = ctk.CTkLabel(bottom, text=text_content, fg_color="yellow", text_color="black", justify="left", anchor="nw", pady=10, padx=10, wraplength=190)
+        text = ctk.CTkLabel(bottom, text=card_type, fg_color="yellow", text_color="black", justify="left", anchor="nw", pady=10, padx=10, wraplength=190)
         text.pack(side="left", fill="both", expand=True)
-
-        buttons = ctk.CTkFrame(bottom, fg_color="orange")
-        buttons.pack(side="right", padx=8)
-
-        button_1 = ctk.CTkButton(buttons, text="", width=32, height=32, fg_color="red", corner_radius=16)
-        button_1.pack(pady=4)
-
-        button_2 = ctk.CTkButton(buttons, text="", width=32, height=32, fg_color="green", corner_radius=16)
-        button_2.pack(pady=4)
 
         return card
     
-class LayoutFunction():
-    def __init__(self, index, card):
-        self.index = index
-        self.card = card
-
-    def create_text(card, TEXT):
-        for c in card:
-            print(TEXT[0])
-
-    
+"""def radiobutton_event():
+    print('radiobutton toggled, current value:', radio_var.get())
 
 
+
+for key, values in TEXT.items():
+
+    group = ctk.CTkFrame(container)
+    group.pack(padx=10, pady=10, fill="x")
+
+    title = ctk.CTkLabel(group, text=key.upper(), font=("Times", 18, "bold"))
+    title.pack()
+
+    for value in values: 
+        radio = ctk.CTkRadioButton(group, text=value)
+        radio.pack(anchor="w", padx=20, pady=20)"""
+        
+        
 
 root = tk.Tk()
 Layout(root)
