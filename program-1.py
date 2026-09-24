@@ -5,39 +5,83 @@ import customtkinter as ctk
 
 ADDITIONS = {
     "sockets": [
-        {"1g": 1}, 
-        {"2g": 0}
-
+        {
+            "name": "1g", 
+            "value": 1, 
+            "price": 40
+        },
+        {
+            "name": "2g", 
+            "value": 0, 
+            "price": 50
+        }
     ],
-    "bedrooms": [{"number of heat pumps": 0}],
-    "network_pts": [{"number of network points": 2}]
+    "bedrooms": [
+        {
+            "name": "number of heat pumps", 
+            "value": 0, 
+            "price": 1800
+        }
+    ],
+    "network_pts": [
+        {
+            "name": "number of network points", 
+            "value": 2, 
+            "price": 50
+        }
+    ]
 }
 
 button_refs = {}
-selections = {}
+selections = []
 
 TEXT = {
     "kitchen": [
-        {"Option A": "Upgrades units and worktop"},
-        {"Option B": "As A plus induction hob"},
-        {"Option C": "As A plus Deluxe appliance pack"}
+        {
+            "option": "Default",
+            "text": "Default",
+            "price": 0
+        },
+        {
+            "option": "Option A",
+            "text": "Upgrades units and worktop",
+            "price": 2000
+        },
+        {
+            "option": "Option B",
+            "text": "As A plus induction hob",
+            "price": 3500
+        },
+        {
+            "option": "Option C",
+            "text": "As A plus Deluxe appliance pack",
+            "price": 6000
+        }
     ],
-
-    "bathroom": {
-        "upgrade": [
-            "Tiles",
-            "Spa Bath",
-            "Shower",
-            "Tapware" 
-        ]    
-    },
-
+    "bathroom": [
+        {
+            "option": "upgrade",
+            "text": "Tiles, Spa Bath, Shower, Tapware",
+            "price": 2500
+        }
+    ],
     "living room": [
-        {"add": "TV point plus roof mounted aerial"},
-        {"add": "TV point plus satellite dish"},
-        {"add": "4.5 KW Heat pump"}
+        {
+            "option": "add",
+            "text": "TV point plus roof mounted aerial",
+            "price": 250
+        },
+        {
+            "option": "add",
+            "text": "TV point plus satellite dish",
+            "price": 250
+        },
+        {
+            "option": "add",
+            "text": "4.5 KW Heat pump",
+            "price": 2500
+        }
     ]
-
 }
 
 root = ctk.CTk()
@@ -46,34 +90,41 @@ root.configure(bg="white")
 
 def create_card():
     for room, upgrades in TEXT.items():
+
         group = ctk.CTkFrame(root)
         group.pack(padx=10, pady=10, fill="x")
 
         title = ctk.CTkLabel(group, text=room.upper(), font=("Times", 18, "bold"))
         title.pack(pady=10)
-
-        selections[room] = ctk.StringVar(value="") 
-
+        
         if room == "kitchen":
-            for option_dict in upgrades:
-                for key, value in option_dict.items():
-                    option = ctk.CTkRadioButton(group, text=value, variable=selections[room], value=key)
-                    option.pack(anchor="w", padx=20, pady=2)
-
-        elif room == "bathroom":
-            for key, values in upgrades.items():
-                if key == "upgrade" and isinstance(values, list):
-                    option = ctk.CTkCheckBox(group, text=key.capitalize(), variable=selections[room])
-                    option.pack(anchor="w", padx=20, pady=2)
-
-                    for sub_value in values:
-                        sub_option = ctk.CTkLabel(group, text=sub_value)
-                        sub_option.pack(anchor="w", padx=40, pady=2)
-        elif room == "living room":
             for item in upgrades:
-                if isinstance(item, dict) and "add" in item:
-                    option = ctk.CTkCheckBox(group, text=item["add"], variable=selections[room])
-                    option.pack(anchor="w", padx=20, pady=2)
+                option = ctk.CTkRadioButton(group, text=item["text"], value=item["option"], command=lambda item=item: ticked(item))
+                option.pack(anchor="w", padx=20, pady=2)
+
+        else:
+            for item in upgrades:
+                checkbox_var = ctk.BooleanVar(value=False)
+                option = ctk.CTkCheckBox(group, text=item["text"], command=lambda item=item,  var=checkbox_var: ticked(item, var))
+                option.pack(anchor="w", padx=20, pady=2)
+
+def ticked(item, var=None):
+    if var is None:
+        for selected in selections[:]:
+            if selected in TEXT["kitchen"]:
+                selections.remove(selected)
+
+        selections.append(item)
+
+    else:
+        if var.get():
+            if item not in selections:
+                selections.append(item)
+        else:
+            if item in selections:
+                selections.remove(item)
+
+    print(selections)
 
 def create_int_card(ADDITIONS):
 
@@ -81,37 +132,41 @@ def create_int_card(ADDITIONS):
         group = ctk.CTkFrame(root)
         group.pack(padx=10, pady=10, fill="x")
 
-        title = ctk.CTkLabel(group, text=key.upper(), font=("Times", 18, "bold"))
+        title = ctk.CTkLabel(
+            group,
+            text=key.upper(),
+            font=("Times", 18, "bold")
+        )
         title.pack(pady=10)
 
         for item in values:
-            if isinstance(item, dict):
-                for sub_key, sub_value in item.items():
 
-                    key_label = ctk.CTkLabel(group, text=sub_key)
-                    key_label.pack(side="left", padx=5)
+            sub_key = item["name"]
+            sub_value = item["value"]
+            price = item["price"]
 
-                    value_label = ctk.CTkLabel(group, text=str(sub_value))
-                    value_label.pack(side="left", padx=5)
+            key_label = ctk.CTkLabel(group, text=f"{sub_key} (${price})")
+            key_label.pack(side="left", padx=5)
 
-                    plus_btn = ctk.CTkButton(group, text="+", command=lambda sk=sub_key, item=item, vlabel=value_label: plus_btn_action(sk, item, vlabel))
-                    plus_btn.pack(side="left", padx=5)
+            value_label = ctk.CTkLabel(group, text=str(sub_value))
+            value_label.pack(side="left", padx=5)
 
-                    minus_btn = ctk.CTkButton(group, text="-", command=lambda sk=sub_key, item=item, vlabel=value_label: minus_btn_action(sk, item, vlabel))
-                    minus_btn.pack(side="left", padx=5)
-                    
+            plus_btn = ctk.CTkButton(group, text="+", command=lambda item=item, vlabel=value_label: plus_btn_action(item, vlabel))
+            plus_btn.pack(side="left", padx=5)
 
-def plus_btn_action(sub_key, item, value_label):
-    if sub_key not in item:
-        return
+            minus_btn = ctk.CTkButton(group, text="-", command=lambda item=item, vlabel=value_label: minus_btn_action(item, vlabel))
+            minus_btn.pack(side="left", padx=5)
+                        
+def plus_btn_action(item, value_label):
 
-    current_value = item[sub_key]
+    current_value = item["value"]
     new_value = current_value + 1
 
     for category, values in ADDITIONS.items():
+
         if item in values:
 
-            total = sum(value for dictionary in values for value in dictionary.values())
+            total = sum(dictionary["value"] for dictionary in values)
 
             if category == "sockets":
                 limit = 12
@@ -123,28 +178,22 @@ def plus_btn_action(sub_key, item, value_label):
                 limit = 8
 
             if total >= limit:
-                item[sub_key] = current_value
                 value_label.configure(text=f"{current_value} maximum limit reached")
             else:
-                item[sub_key] = new_value
+                item["value"] = new_value
                 value_label.configure(text=str(new_value))
+            break   
 
-            break
+def minus_btn_action(item, value_label):
 
-        
-
-def minus_btn_action(sub_key, item, value_label):
-    if sub_key not in item:
-        return
-
-    current_value = item[sub_key]
+    current_value = item["value"]
     new_value = current_value - 1
 
     for category, values in ADDITIONS.items():
 
         if item in values:
 
-            total = sum(value for dictionary in values for value in dictionary.values())
+            total = sum(dictionary["value"] for dictionary in values)
 
             if category == "sockets":
                 minimum = 1
@@ -157,15 +206,16 @@ def minus_btn_action(sub_key, item, value_label):
 
             if new_value < 0:
                 value_label.configure(text="0 minimum reached")
-
             elif total <= minimum:
                 value_label.configure(text=f"{current_value} minimum limit reached")
 
             else:
-                item[sub_key] = new_value
+                item["value"] = new_value
                 value_label.configure(text=str(new_value))
-
             break
+
+def total_price():
+    pass
 
 create_card()
 create_int_card(ADDITIONS)
