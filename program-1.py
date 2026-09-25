@@ -33,7 +33,7 @@ ADDITIONS = {
 }
 
 button_refs = []
-selections = []
+selections = {}
 
 TEXT = {
     "kitchen": [
@@ -89,8 +89,6 @@ root.geometry("1200x1200")
 root.configure(bg="white")
 
 def create_card():
-    
-
     for room, upgrades in TEXT.items():
         
 
@@ -113,29 +111,22 @@ def create_card():
 
         else:
             for item in upgrades:
-                checkbox_var = ctk.BooleanVar(value=False)
-                option = ctk.CTkCheckBox(group, text=item["text"], command=lambda item=item, var=checkbox_var: ticked(item, var))
+
+                is_selected = tk.BooleanVar()
+                option = ctk.CTkCheckBox(group,text=item["text"],variable=is_selected,command=lambda item=item, var=is_selected: checkbox_ticked(item, var))
                 option.pack(anchor="w", padx=20, pady=2)
+        
 
 
-
-def ticked(item, var=None):
-    if var is None:
-        for selected in selections[:]:
-            if selected in TEXT["kitchen"]:
-                selections.remove(selected)
-
-        selections.append(item)
-
+def checkbox_ticked(item, var):
+    if var.get():
+        selections[item["option"]] = item
     else:
-        if var.get():
-            if item not in selections:
-                selections.append(item)
-        else:
-            if item in selections:
-                selections.remove(item)
+        selections.pop(item["option"], None)
 
     print(selections)
+
+       
 
 def create_int_card(ADDITIONS):
 
