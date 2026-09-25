@@ -99,11 +99,14 @@ def create_card():
         title.pack(pady=10)
         
         if room == "kitchen":
-            var = tk.StringVar()
-            var.set(upgrades[0])
+            var = tk.StringVar(value=upgrades[0]["option"])
         
-            def radio_ticked():
-                print(var.get())
+            def radio_ticked(var=var, upgrades=upgrades):
+                selected = next(item for item in upgrades if item["option"] == var.get())
+                selections["kitchen"] = selected
+
+
+            selections["kitchen"] = upgrades[0]
             
             for item in upgrades:
                 option = ctk.CTkRadioButton(group, text=item["text"], variable=var, value=item["option"], command=radio_ticked)
@@ -111,23 +114,17 @@ def create_card():
 
         else:
             for item in upgrades:
-
-                is_selected = tk.BooleanVar()
-                option = ctk.CTkCheckBox(group,text=item["text"],variable=is_selected,command=lambda item=item, var=is_selected: checkbox_ticked(item, var))
+                var = tk.BooleanVar(value=False)
+                option = ctk.CTkCheckBox(group,text=item["text"],variable=var,command=lambda item=item, var=var: checkbox_ticked(item, var))
                 option.pack(anchor="w", padx=20, pady=2)
-        
-
 
 def checkbox_ticked(item, var):
+    key = (item["option"], item["text"])
     if var.get():
-        selections[item["option"]] = item
+        selections[key] = item
     else:
-        selections.pop(item["option"], None)
-
-    print(selections)
-
+        selections.pop(key, None)
        
-
 def create_int_card(ADDITIONS):
 
     for key, values in ADDITIONS.items():
@@ -184,6 +181,8 @@ def plus_btn_action(item, value_label):
             else:
                 item["value"] = new_value
                 value_label.configure(text=str(new_value))
+                key = (item["name"], item["price"])
+                selections[key] = item
             break   
 
 def minus_btn_action(item, value_label):
@@ -214,11 +213,30 @@ def minus_btn_action(item, value_label):
             else:
                 item["value"] = new_value
                 value_label.configure(text=str(new_value))
+                key = (item["name"], item["price"])
+                selections.pop(key, None)
             break
 
 def total_price():
-    pass
+    total = 75000 
+
+    for item in selections.values():
+        if "option" in item:
+            print(f"{item} yes")
+            total += item["price"]
+        else:
+            total += item["value"] * item["price"]
+            k = item["value"] * item["price"]
+            print(f"{item} {k} no")
+
+    print(f"Total price: ${total:,.2f}")
+
+
+
+
 
 create_card()
 create_int_card(ADDITIONS)
+btnwk = ctk.CTkButton(root, text="Show total", command=total_price)
+btnwk.pack()
 root.mainloop()
