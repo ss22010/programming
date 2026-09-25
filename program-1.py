@@ -104,6 +104,7 @@ def create_card():
             def radio_ticked(var=var, upgrades=upgrades):
                 selected = next(item for item in upgrades if item["option"] == var.get())
                 selections["kitchen"] = selected
+                total_price()
 
 
             selections["kitchen"] = upgrades[0]
@@ -124,7 +125,9 @@ def checkbox_ticked(item, var):
         selections[key] = item
     else:
         selections.pop(key, None)
-       
+    total_price()
+
+    
 def create_int_card(ADDITIONS):
 
     for key, values in ADDITIONS.items():
@@ -155,6 +158,7 @@ def create_int_card(ADDITIONS):
 
             minus_btn = ctk.CTkButton(group, text="-", command=lambda item=item, vlabel=value_label: minus_btn_action(item, vlabel))
             minus_btn.pack(side="left", padx=5)
+    
                         
 def plus_btn_action(item, value_label):
 
@@ -184,6 +188,7 @@ def plus_btn_action(item, value_label):
                 key = (item["name"], item["price"])
                 selections[key] = item
             break   
+    total_price()
 
 def minus_btn_action(item, value_label):
 
@@ -214,29 +219,36 @@ def minus_btn_action(item, value_label):
                 item["value"] = new_value
                 value_label.configure(text=str(new_value))
                 key = (item["name"], item["price"])
-                selections.pop(key, None)
+                if new_value > minimum:
+                    selections[key] = item
+                else:
+                    selections.pop(key, None)
+                    
             break
+    total_price()
 
 def total_price():
-    total = 75000 
+    total = 75000
 
     for item in selections.values():
         if "option" in item:
-            print(f"{item} yes")
             total += item["price"]
         else:
             total += item["value"] * item["price"]
-            k = item["value"] * item["price"]
-            print(f"{item} {k} no")
 
-    print(f"Total price: ${total:,.2f}")
-
+    lbl.configure(text=f"Total price: ${total:,.2f}")
+    return total
 
 
 
+
+lbl = ctk.CTkLabel(root, text="Total price: $75,000.00")
+lbl.pack(side="bottom", pady=10)
 
 create_card()
 create_int_card(ADDITIONS)
+
 btnwk = ctk.CTkButton(root, text="Show total", command=total_price)
-btnwk.pack()
+btnwk.pack(side="bottom")
+
 root.mainloop()
