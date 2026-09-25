@@ -32,7 +32,7 @@ ADDITIONS = {
     ]
 }
 
-button_refs = {}
+button_refs = []
 selections = []
 
 TEXT = {
@@ -89,7 +89,10 @@ root.geometry("1200x1200")
 root.configure(bg="white")
 
 def create_card():
+    
+
     for room, upgrades in TEXT.items():
+        
 
         group = ctk.CTkFrame(root)
         group.pack(padx=10, pady=10, fill="x")
@@ -98,15 +101,23 @@ def create_card():
         title.pack(pady=10)
         
         if room == "kitchen":
+            var = tk.StringVar()
+            var.set(upgrades[0])
+        
+            def radio_ticked():
+                print(var.get())
+            
             for item in upgrades:
-                option = ctk.CTkRadioButton(group, text=item["text"], value=item["option"], command=lambda item=item: ticked(item))
+                option = ctk.CTkRadioButton(group, text=item["text"], variable=var, value=item["option"], command=radio_ticked)
                 option.pack(anchor="w", padx=20, pady=2)
 
         else:
             for item in upgrades:
                 checkbox_var = ctk.BooleanVar(value=False)
-                option = ctk.CTkCheckBox(group, text=item["text"], command=lambda item=item,  var=checkbox_var: ticked(item, var))
+                option = ctk.CTkCheckBox(group, text=item["text"], command=lambda item=item, var=checkbox_var: ticked(item, var))
                 option.pack(anchor="w", padx=20, pady=2)
+
+
 
 def ticked(item, var=None):
     if var is None:
