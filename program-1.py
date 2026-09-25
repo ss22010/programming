@@ -248,7 +248,4 @@ lbl.pack(side="bottom", pady=10)
 create_card()
 create_int_card(ADDITIONS)
 
-btnwk = ctk.CTkButton(root, text="Show total", command=total_price)
-btnwk.pack(side="bottom")
-
 root.mainloop()
