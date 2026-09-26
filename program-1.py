@@ -96,8 +96,19 @@ class Layout():
         self.scroll_frame = ctk.CTkScrollableFrame(self.root)
         self.scroll_frame.pack(expand=True, fill="both", padx=30, pady=10)
 
+        self.card_index = 0
+
         self.create_card()
         self.create_int_card(ADDITIONS)
+
+    def add_card(self, card):
+
+        row = self.card_index // 2
+        column = self.card_index % 2
+
+        card.grid(row=row, column=column, padx=10, pady=10, sticky="nsew")
+
+        self.card_index += 1
 
     def checkbox_ticked(self, item, var):
         key = (item["option"], item["text"])
@@ -134,16 +145,20 @@ class Layout():
         d_img = ctk.CTkFrame(default_bar, fg_color="orange", height=100, width=550, corner_radius=18)
         d_img.grid(row=0, column=1, pady=10, padx=10)
 
-        container = tk.Frame(self.scroll_frame, bg="white")
-        container.pack(expand=True, fill="both", padx=30, pady=30)
+        self.container = tk.Frame(self.scroll_frame, bg="white")
+        self.container.pack(expand=True, fill="both", padx=30, pady=30)
+
+        self.container.columnconfigure(0, weight=1)
+        self.container.columnconfigure(1, weight=1)
 
         for room, upgrades in TEXT.items():
-            group = ctk.CTkFrame(self.scroll_frame)
-            group.pack(padx=10, pady=10, fill="x")
 
-            title = ctk.CTkLabel(group, text=room.upper(), font=("Times", 18, "bold"))
-            title.pack(pady=10)
+            card, bottom = self.create_layout(self.container, card_type=room)
+            card.grid(padx=10, pady=10, sticky="nsew")
             
+            self.add_card(card)
+
+
             if room == "kitchen":
                 var = tk.StringVar(value=upgrades[0]["option"])
             
@@ -156,28 +171,41 @@ class Layout():
                 selections["kitchen"] = upgrades[0]
                 
                 for item in upgrades:
-                    option = ctk.CTkRadioButton(group, text=item["text"], variable=var, value=item["option"], command=radio_ticked)
+                    option = ctk.CTkRadioButton(bottom, text=item["text"], variable=var, value=item["option"], command=radio_ticked)
                     option.pack(anchor="w", padx=20, pady=2)
 
             else:
                 for item in upgrades:
                     var = tk.BooleanVar(value=False)
-                    option = ctk.CTkCheckBox(group,text=item["text"],variable=var,command=lambda item=item, var=var: self.checkbox_ticked(item, var))
+                    option = ctk.CTkCheckBox(bottom, text=item["text"], variable=var, command=lambda item=item, var=var: self.checkbox_ticked(item, var))
                     option.pack(anchor="w", padx=20, pady=2)
 
+    def create_layout(self, container, card_type):
 
+        card = ctk.CTkFrame(container, fg_color="pink", corner_radius=18)
+
+        image = ctk.CTkFrame(card, fg_color="blue", height=130)
+        image.pack(fill="both", expand=True, padx=12, pady=(12, 0))
+        image.pack_propagate(False)
+
+        bottom = ctk.CTkFrame(card, fg_color="purple")
+        bottom.pack(fill="both", expand=True, padx=12, pady=12)
+
+        title = ctk.CTkLabel(bottom, text=card_type.upper(), font=("Times", 18, "bold"))
+        title.pack(anchor="w", padx=15, pady=10)
+
+        return card, bottom
 
     def create_int_card(self, ADDITIONS):
         for key, values in ADDITIONS.items():
-            group = ctk.CTkFrame(self.scroll_frame)
-            group.pack(padx=10, pady=10, fill="x")
 
-            title = ctk.CTkLabel(
-                group,
-                text=key.upper(),
-                font=("Times", 18, "bold")
-            )
-            title.pack(pady=10)
+            card, bottom = self.create_layout(self.container, card_type=key)
+            card.grid(padx=10, pady=10, sticky="nsew")
+
+            self.add_card(card)
+
+            controls = ctk.CTkFrame(bottom, fg_color="transparent")
+            controls.pack(fill="x", padx=10, pady=5)
 
             for item in values:
 
@@ -185,16 +213,16 @@ class Layout():
                 sub_value = item["value"]
                 price = item["price"]
 
-                key_label = ctk.CTkLabel(group, text=f"{sub_key} (${price})")
+                key_label = ctk.CTkLabel(controls, text=f"{sub_key} (${price})")
                 key_label.pack(side="left", padx=5)
 
-                value_label = ctk.CTkLabel(group, text=str(sub_value))
+                value_label = ctk.CTkLabel(controls, text=str(sub_value))
                 value_label.pack(side="left", padx=5)
 
-                plus_btn = ctk.CTkButton(group, text="+", command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
+                plus_btn = ctk.CTkButton(controls, text="+", command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
                 plus_btn.pack(side="left", padx=5)
 
-                minus_btn = ctk.CTkButton(group, text="-", command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
+                minus_btn = ctk.CTkButton(controls, text="-", command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
                 minus_btn.pack(side="left", padx=5)
 
     def plus_btn_action(self, item, value_label):
