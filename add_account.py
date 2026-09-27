@@ -2,12 +2,96 @@ import customtkinter as ctk
 from tkinter import *
 import re
 
+country_codes = [
+    "American Samoa (+1 684)",
+    "Argentina (+54)",
+    "Australia (+61)",
+    "Austria (+43)",
+    "Bahamas (+1 242)",
+    "Bangladesh (+880)",
+    "Barbados (+1 246)",
+    "Belgium (+32)",
+    "Brazil (+55)",
+    "Canada (+1)",
+    "Chile (+56)",
+    "China (+86)",
+    "Colombia (+57)",
+    "Cook Islands (+682)",
+    "Costa Rica (+506)",
+    "Czech Republic (+420)",
+    "Denmark (+45)",
+    "Egypt (+20)",
+    "Fiji (+679)",
+    "Finland (+358)",
+    "France (+33)",
+    "French Polynesia (+689)",
+    "Germany (+49)",
+    "Ghana (+233)",
+    "Greece (+30)",
+    "Guam (+1 671)",
+    "Hong Kong (+852)",
+    "Hungary (+36)",
+    "Iceland (+354)",
+    "India (+91)",
+    "Indonesia (+62)",
+    "Ireland (+353)",
+    "Israel (+972)",
+    "Italy (+39)",
+    "Jamaica (+1 876)",
+    "Japan (+81)",
+    "Kenya (+254)",
+    "Kiribati (+686)",
+    "Malaysia (+60)",
+    "Marshall Islands (+692)",
+    "Mexico (+52)",
+    "Micronesia (+691)",
+    "Nauru (+674)",
+    "Nepal (+977)",
+    "Netherlands (+31)",
+    "New Caledonia (+687)",
+    "New Zealand (+64)",
+    "Niue (+683)",
+    "Northern Mariana Islands (+1 670)",
+    "Norway (+47)",
+    "Palau (+680)",
+    "Pakistan (+92)",
+    "Panama (+507)",
+    "Papua New Guinea (+675)",
+    "Peru (+51)",
+    "Philippines (+63)",
+    "Poland (+48)",
+    "Portugal (+351)",
+    "Russia (+7)",
+    "Saudi Arabia (+966)",
+    "Singapore (+65)",
+    "Solomon Islands (+677)",
+    "South Africa (+27)",
+    "South Korea (+82)",
+    "Spain (+34)",
+    "Sri Lanka (+94)",
+    "Sweden (+46)",
+    "Switzerland (+41)",
+    "Taiwan (+886)",
+    "Thailand (+66)",
+    "Tonga (+676)",
+    "Trinidad and Tobago (+1 868)",
+    "Turkey (+90)",
+    "Tuvalu (+688)",
+    "United Arab Emirates (+971)",
+    "United Kingdom (+44)",
+    "United States (+1)",
+    "Vanuatu (+678)",
+    "Vietnam (+84)"
+]
+
+new_member = {}
+
 root = ctk.CTk()
 
 def on_click():
     new_window = ctk.CTkToplevel(master=root)
     new_window.title("add_acc_win")
-    new_window.geometry("300x200")
+    new_window.geometry("550x500")
 
     new_window.after(200, lambda: new_window.focus())
 
@@ -28,6 +112,44 @@ def on_click():
     email = ctk.CTkEntry(new_window, placeholder_text="Enter email address", width=100, height=50)
     email.grid(row=2, column=1)
 
+    lbl4 = ctk.CTkLabel(new_window, text="Phone Number", height = 50, width=100)
+    lbl4.grid(row=3, column=0)
+    area_dropdown = ctk.CTkComboBox(new_window, values=country_codes, width=180, state="readonly")
+    area_dropdown.set("New Zealand (+64)")
+    area_dropdown.grid(row=3, column=1, padx=(5, 5))
+
+    phone = ctk.CTkEntry(new_window, placeholder_text="Enter Phone Number", width=200)
+    phone.grid(row=3, column=2, padx=(5, 0))
+
+    lbl5 = ctk.CTkLabel(new_window, text="Username", height=50, width=100)
+    lbl5.grid(row=4, column=0)
+    username = ctk.CTkEntry(new_window, placeholder_text="Username", width=200)
+    username.grid(row=4, column=1)
+
+    lbl6 = ctk.CTkLabel(new_window, text="Password", height=50, width=100)
+    lbl6.grid(row=5, column=0)
+    password = ctk.CTkEntry(new_window, placeholder_text="Password", width=200)
+    password.grid(row=5, column=1)
+
+    def valid_number():
+        selected_text = area_dropdown.get()
+
+        try:
+            #explain how this works and used 
+            area = selected_text.split("(")[1].replace(")", "")
+        except IndexError:
+            area = ""
+
+        phone_entry = phone.get().strip()
+
+        if not phone_entry:
+            lbl4.configure(text="Please Enter Your Phone Number")
+        else:
+            full_num = f"{area} {phone_entry}"
+            lbl4.configure(text="VALID PHONE NUMBER")
+            print(f"Clean number: {full_num}")
+
+
     def valid_email():
         email_match = email.get()
         #talk about finding this and what it does
@@ -36,14 +158,49 @@ def on_click():
         #also talk about re.fullmatch()
         if re.fullmatch(email_pattern, email_match):
             lbl3.configure(text="VALID EMAIL")
-            print("yes")
         else:
             lbl3.configure(text="INVALID EMAIL")
-            print("no")
 
-    check_email = ctk.CTkButton(new_window, text="check", command=valid_email)
-    check_email.grid(row=3, column=1)
+    def valid_name(entry, label):
+        name = entry.get()
 
+        if any(char.isdigit() for char in name):
+            label.configure(text="INVALID NAME")
+        elif not name:
+            label.configure(text="NAME REQUIRED")
+        else:
+            label.configure(text="VALID NAME")
+
+    def valid_username():
+        check_user = username.get()
+
+        if not check_user:
+            lbl5.configure(text="USERNAME REQUIRED")
+        elif check_user in new_member:
+            lbl5.configure(text="USERNAME UNAVALIBLE")
+        else:
+            lbl5.configure("VALID USERNAME")
+
+    def valid_password():
+        check_pass = password.get()
+
+        while True:
+
+            if not check_pass:
+                lbl6.configure(text="PASSWORD REQUIRED")
+            elif len(check_pass) < 6:
+                lbl6.configure(text="LENGTH MUST BE > 5")
+            elif any(not char.isalnum() and not char.isspace() for char in check_pass):
+                lbl6.configure(text="MUST CONTAIN SPECIAL A CHARACTER")
+            elif any(not char.isupper() for char in check_pass):
+                lbl6.configure(text="MUST CONTAIN A CAPITAL LETTER")
+            else: 
+                lbl6.configure("VALID PASSOWRD")
+                return False
+
+
+    check = ctk.CTkButton(new_window, text="Check", command=lambda fname=fname, lname=lname, lbl1=lbl1, lbl2=lbl2: [valid_name(fname, lbl1), valid_name(lname, lbl2), valid_email(), valid_number(), valid_username(), valid_password()])
+    check.grid(row=6, column=1)
 
 
 btn = ctk.CTkButton(root, text="add_account", command=on_click)
