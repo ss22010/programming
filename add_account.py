@@ -98,14 +98,12 @@ members = []
 root = ctk.CTk()
 
 def on_click():
-    new_window = ctk.CTkToplevel(master=root)
-    new_window.title("add_acc_win")
+    new_window = ctk.CTkToplevel(root)
+    new_window.title("SIGN UP")
     new_window.geometry("320x650")
 
     new_window.columnconfigure(1, weight=1)
     new_window.columnconfigure(2, weight=1)
-
-    new_window.after(200, lambda: new_window.focus())
 
     valid_first = ctk.BooleanVar(value=False)
     valid_last = ctk.BooleanVar(value=False)
@@ -170,10 +168,16 @@ def on_click():
         if not phone_entry:
             lbl4.configure(text="PHONE NUMBER REQUIRED", text_color="red")
             valid_phone.set(False)
-        else:
+        elif phone_entry.isdigit():
+            lbl4.configure(text="Phone Number", text_color="gray")
             full_num = f"{area} {phone_entry}"
             new_member["phone"] = full_num
             valid_phone.set(True)
+
+        else:
+            lbl4.configure(text="NUMERIC NUMBER ONLY", text_color="red")
+            valid_phone.set(False)
+            
 
         update_check_button()
 
@@ -184,6 +188,7 @@ def on_click():
 
         #also talk about re.fullmatch()
         if re.fullmatch(email_pattern, email_match):
+            lbl3.configure(text="Email", text_color="gray")
             valid_email_var.set(True)
         else:
             lbl3.configure(text="INVALID EMAIL", text_color="red")
@@ -200,7 +205,14 @@ def on_click():
             label.configure(text="NAME REQUIRED", text_color="red")
             valid_var.set(False)
         else:
-            valid_var.set(True)
+            if label == lbl1: 
+                label.configure(text="First Name", text_color="gray")
+                valid_var.set(True)
+
+            elif label == lbl2:
+                label.configure(text="Last Name", text_color="gray")
+                valid_var.set(True)
+
         update_check_button()
 
     def valid_username():
@@ -215,6 +227,7 @@ def on_click():
             valid_user.set(False)
 
         else:
+            lbl5.configure(text="Username", text_color="gray")
             valid_user.set(True)
 
         update_check_button()
@@ -251,18 +264,13 @@ def on_click():
         if all(var.get() == 1 for var in checked_var):
             for rule in password_rules:
                 rule.grid_forget()
-
+            
+            lbl6.configure(text="Password", text_color="gray")
             valid_pass.set(True)
 
         else:
             for position, rule in enumerate(password_rules):
-                rule.grid(
-                    row=position + 12,
-                    column=1,
-                    columnspan=2,
-                    padx=10,
-                    sticky="w"
-                )
+                rule.grid(row=position + 12, column=1, columnspan=2, padx=10, sticky="w")
 
             valid_pass.set(False)
 
@@ -356,6 +364,29 @@ def on_click():
         else:
             check.configure(state="disabled", fg_color="gray")
 
+    def open_msg(word):
+        if word == "email":
+            errormsg = ctk.CTkToplevel(new_window)
+            errormsg.title("Unsuccessful")
+
+            error_lbl = ctk.CTkLabel(errormsg, text="Email is already in use!")
+            error_lbl.pack()
+
+        elif word == "username":
+            errormsg = ctk.CTkToplevel(new_window)
+            errormsg.title("Unsuccessful")
+
+            error_lbl = ctk.CTkLabel(errormsg, text="Username is already in use!")
+            error_lbl.pack()
+
+        else:
+            errormsg = ctk.CTkToplevel(new_window)
+            errormsg.title("Success")
+
+            error_lbl = ctk.CTkLabel(errormsg, text="New member added successfully!")
+            error_lbl.pack()
+
+
     def accept_new_user():
         new_member["name"] = {
             "first": fname.get(),
@@ -374,15 +405,14 @@ def on_click():
             new_member["company"] = company_name.get()
 
         if new_member["email"] in members:
-            add.configure(text="Email already in use")
-            add.grid()
+            open_msg("email")
+            
         elif new_member["username"] in members:
-            add.configure(text="Username aleady in use")
-            add.grid()
+            open_msg("username")
+            
         else:
             members.append(new_member)
-            add.configure(text="New member added")
-            add.grid()
+            open_msg("success")
 
             print(members)
     
@@ -390,8 +420,6 @@ def on_click():
 
     check = ctk.CTkButton(new_window, text="Check", height=40, state="disabled", fg_color="gray", command=accept_new_user)
     check.grid(row=(new_row + 4), column=1, columnspan=2, sticky="ew", padx=10, pady=10)
-
-    add = ctk.CTkLabel(new_window, text="")
 
 
 btn = ctk.CTkButton(root, text="add_account", command=on_click)
