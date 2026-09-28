@@ -92,66 +92,90 @@ contain = [
     "Must contain one or more numbers"
 ]
 
-new_member = {}
+members = []
+
 
 root = ctk.CTk()
 
 def on_click():
     new_window = ctk.CTkToplevel(master=root)
     new_window.title("add_acc_win")
-    new_window.geometry("700x500")
+    new_window.geometry("320x650")
+
+    new_window.columnconfigure(1, weight=1)
+    new_window.columnconfigure(2, weight=1)
 
     new_window.after(200, lambda: new_window.focus())
 
-    lbl1 = ctk.CTkLabel(new_window, text="First Name", height=50, width=100)
-    lbl1.grid(row=0, column=0)
-    fname = ctk.CTkEntry(new_window, placeholder_text="Enter firstname", width=100, height=50)
-    fname.grid(row=0, column=1)
+    valid_first = ctk.BooleanVar(value=False)
+    valid_last = ctk.BooleanVar(value=False)
+    valid_email_var = ctk.BooleanVar(value=False)
+    valid_phone = ctk.BooleanVar(value=False)
+    valid_user = ctk.BooleanVar(value=False)
+    valid_pass = ctk.BooleanVar(value=False)
+    valid_company = ctk.BooleanVar(value=True) 
+
+    
+
+    new_member = {}
+
+    lbl1 = ctk.CTkLabel(new_window, text="First Name", anchor="w")
+    lbl1.grid(row=0, column=1, sticky="w", padx=10)
+
+    fname = ctk.CTkEntry(new_window, placeholder_text="Enter firstname", height=40)
+    fname.grid(row=1, column=1, columnspan=2, sticky="ew", padx=10)
 
 
-    lbl2 = ctk.CTkLabel(new_window, text="Last Name", height=50, width=100)
-    lbl2.grid(row=1, column=0)
-    lname = ctk.CTkEntry(new_window, placeholder_text="Enter lastname", width=100, height=50)
-    lname.grid(row=1, column=1)
+    lbl2 = ctk.CTkLabel(new_window, text="Last Name", anchor="w")
+    lbl2.grid(row=2, column=1, sticky="w", padx=10)
+    lname = ctk.CTkEntry(new_window, placeholder_text="Enter lastname", height=40)
+    lname.grid(row=3, column=1, columnspan=2, sticky="ew", padx=10)
 
 
-    lbl3 = ctk.CTkLabel(new_window, text="Email Address", height=50, width=100)
-    lbl3.grid(row=2, column=0)
-    email = ctk.CTkEntry(new_window, placeholder_text="Enter email address", width=100, height=50)
-    email.grid(row=2, column=1)
+    lbl3 = ctk.CTkLabel(new_window, text="Email Address", anchor="w")
+    lbl3.grid(row=4, column=1, sticky="w", padx=10)
+    email = ctk.CTkEntry(new_window, placeholder_text="Enter email address", height=40)
+    email.grid(row=5, column=1, columnspan=2, sticky="ew", padx=10)
 
-    lbl4 = ctk.CTkLabel(new_window, text="Phone Number", height = 50, width=100)
-    lbl4.grid(row=3, column=0)
-    area_dropdown = ctk.CTkComboBox(new_window, values=country_codes, width=180, state="readonly")
-    area_dropdown.set("New Zealand (+64)")
-    area_dropdown.grid(row=3, column=1, padx=(5, 5))
+    def chosen_area(choice):
+        selected_country.set(choice)
 
-    phone = ctk.CTkEntry(new_window, placeholder_text="Enter Phone Number", width=200)
-    phone.grid(row=3, column=2, padx=(5, 0))
+        area = choice.split("(")[1].replace(")", "")
+        area_dropdown.set(f"({area})")
+    
+    lbl4 = ctk.CTkLabel(new_window, text="Phone Number", anchor="w")
+    lbl4.grid(row=6, column=1, columnspan=2, sticky="w", padx=10)
 
-    lbl5 = ctk.CTkLabel(new_window, text="Username", height=50, width=100)
-    lbl5.grid(row=4, column=0)
-    username = ctk.CTkEntry(new_window, placeholder_text="Username", width=200)
-    username.grid(row=4, column=1)
+    selected_country = ctk.StringVar()
+
+    area_dropdown = ctk.CTkComboBox(new_window, values=country_codes, state="readonly", height=40, command=chosen_area)
+    area_dropdown.set("(+64)")
+    selected_country.set("New Zealand (+64)")
+    area_dropdown.grid(row=7, column=1, sticky="ew", padx=(10, 5))
+
+
+    phone = ctk.CTkEntry(new_window, placeholder_text="Enter Phone Number", height=40)
+    phone.grid(row=7, column=2, sticky="ew", padx=(5, 10))
+
+    lbl5 = ctk.CTkLabel(new_window, text="Username", anchor="w")
+    lbl5.grid(row=8, column=1, sticky="w", padx=10)
+
+    username = ctk.CTkEntry(new_window, placeholder_text="Username", height=40)
+    username.grid(row=9, column=1, columnspan=2, sticky="ew", padx=10)
 
     def valid_number():
-        selected_text = area_dropdown.get()
-
-        try:
-            #explain how this works and used 
-            area = selected_text.split("(")[1].replace(")", "")
-        except IndexError:
-            area = ""
-
+        area = area_dropdown.get()
         phone_entry = phone.get().strip()
 
         if not phone_entry:
-            lbl4.configure(text="Please Enter Your Phone Number")
+            lbl4.configure(text="PHONE NUMBER REQUIRED", text_color="red")
+            valid_phone.set(False)
         else:
             full_num = f"{area} {phone_entry}"
-            lbl4.configure(text="VALID PHONE NUMBER")
-            print(f"Clean number: {full_num}")
+            new_member["phone"] = full_num
+            valid_phone.set(True)
 
+        update_check_button()
 
     def valid_email():
         email_match = email.get()
@@ -160,103 +184,214 @@ def on_click():
 
         #also talk about re.fullmatch()
         if re.fullmatch(email_pattern, email_match):
-            lbl3.configure(text="VALID EMAIL")
+            valid_email_var.set(True)
         else:
-            lbl3.configure(text="INVALID EMAIL")
+            lbl3.configure(text="INVALID EMAIL", text_color="red")
+            valid_email_var.set(False)
+        update_check_button()
 
-    def valid_name(entry, label):
+    def valid_name(entry, label, valid_var):
         name = entry.get()
 
         if any(char.isdigit() for char in name):
-            label.configure(text="INVALID NAME")
+            label.configure(text="INVALID NAME", text_color="red")
+            valid_var.set(False)
         elif not name:
-            label.configure(text="NAME REQUIRED")
+            label.configure(text="NAME REQUIRED", text_color="red")
+            valid_var.set(False)
         else:
-            label.configure(text="VALID NAME")
+            valid_var.set(True)
+        update_check_button()
 
     def valid_username():
         check_user = username.get()
 
         if not check_user:
-            lbl5.configure(text="USERNAME REQUIRED")
-        elif check_user in new_member:
-            lbl5.configure(text="USERNAME UNAVALIBLE")
+            lbl5.configure(text="USERNAME REQUIRED", text_color="red")
+            valid_user.set(False)
+
+        elif any(member.get("username") == check_user for member in members):
+            lbl5.configure(text="USERNAME UNAVAILABLE", text_color="red")
+            valid_user.set(False)
+
         else:
-            lbl5.configure(text="VALID USERNAME")
+            valid_user.set(True)
+
+        update_check_button()
 
     def valid_password(event):
         check_pass = password.get()
 
         if check_pass:
             password_rules[0].select()
-            password_rules[0].configure(text_color="green")
         else:
             password_rules[0].deselect()
-            password_rules[0].configure(text_color="gray")
-
             
         if len(check_pass) > 5:
             password_rules[1].select()
-            password_rules[1].configure(text_color="green")
         else:
             password_rules[1].deselect()
-            password_rules[1].configure(text_color="gray")
 
         if any(not char.isalnum() and not char.isspace() for char in check_pass):
             password_rules[2].select()
-            password_rules[2].configure(text_color="green")
         else:
             password_rules[2].deselect()
-            password_rules[2].configure(text_color="gray")
 
         if any(char.isupper() for char in check_pass):
             password_rules[3].select()
-            password_rules[3].configure(text_color="green")
         else:
             password_rules[3].deselect()
-            password_rules[3].configure(text_color="gray")
 
         if any(char.isdigit() for char in check_pass):
             password_rules[4].select()
-            password_rules[4].configure(text_color="green")
         else:
             password_rules[4].deselect()
-            password_rules[4].configure(text_color="gray")
+
         
         if all(var.get() == 1 for var in checked_var):
             for rule in password_rules:
                 rule.grid_forget()
-            
-            lbl.grid(row=7, column=0)
+
+            valid_pass.set(True)
 
         else:
-            lbl.grid_forget()
             for position, rule in enumerate(password_rules):
-                rule.grid(row=position + 7, column=0, sticky="w")
+                rule.grid(
+                    row=position + 12,
+                    column=1,
+                    columnspan=2,
+                    padx=10,
+                    sticky="w"
+                )
+
+            valid_pass.set(False)
+
+        update_check_button()
+            
             
 
     password_rules = []
     checked_var = []
+
     for position, rule in enumerate(contain):
-        row = position + 7
+        row = position + 12
+
         var = ctk.IntVar()
         checked_var.append(var)
-    
-        lbl_rule = ctk.CTkCheckBox(new_window, text=rule, variable=var, text_color="gray", state="disabled")
-        lbl_rule.grid(row=row, column=0, sticky="w")
+
+        lbl_rule = ctk.CTkCheckBox(new_window, text=rule, variable=var, text_color="gray", state="disabled", border_width=1, font=("Arial", 10), checkbox_width=16, checkbox_height=16)
+        lbl_rule.grid(row=row, column=1, columnspan=2, sticky="ew", padx=10)
 
         password_rules.append(lbl_rule)
-        
-    lbl = ctk.CTkLabel(new_window, text="VALID PASSWORD")
 
-    password = ctk.CTkEntry(new_window, placeholder_text="Password", width=200)
-    password.grid(row=5, column=1)
+
+    lbl6 = ctk.CTkLabel(new_window, text="Password", anchor="w")
+    lbl6.grid(row=10, column=1, sticky="w", padx=10)
+
+    password = ctk.CTkEntry(new_window, placeholder_text="Password", height=40)
+    password.grid(row=11, column=1, columnspan=2, sticky="ew", padx=10)
+
 
     password.bind("<KeyRelease>", valid_password)
 
+    new_row = len(password_rules) + 12
 
-    check = ctk.CTkButton(new_window, text="Check", command=lambda fname=fname, lname=lname, lbl1=lbl1, lbl2=lbl2: [valid_name(fname, lbl1), valid_name(lname, lbl2), valid_email(), valid_number(), valid_username(), valid_password()])
-    check.grid(row=6, column=1)
+    def valid_trader():
+        if check_trader.get() == "on":
+            new_window.geometry("320x730")
+            discount.grid(row=(new_row + 1), column=1, sticky="w", padx=10, columnspan=2)
+            company.grid(row=(new_row + 2), column=1, sticky="w", padx=10)
+            company_name.grid(row=(new_row + 3), column=1, columnspan=2, sticky="ew", padx=10)
+        elif check_trader.get() == "off":
+            new_window.geometry("320x650")
+            discount.grid_forget()
+            company.grid_forget()
+            company_name.grid_forget()
+        save_comp()
+    
+
+    def save_comp():
+        company_entry = company_name.get()
+
+        if check_trader.get() == "on":
+            if company_entry:
+                valid_company.set(True)
+            else:
+                company.configure(text="COMPANY REQUIRED", text_color="red")
+                valid_company.set(False)
+        else:
+            valid_company.set(True)
+
+        update_check_button()
+
+
+    check_trader = ctk.StringVar(value="off")
+
+    trader = ctk.CTkCheckBox(new_window, text="I am a Trade Customer", command=valid_trader, variable=check_trader, onvalue="on", offvalue="off")
+    trader.grid(row=new_row, column=1, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    discount = ctk.CTkLabel(new_window, text="Trade Customers receive a 10% discount on both the basic house and any options selected", text_color="gray", font=("Arial", 10), wraplength=300, justify="left", anchor="w")
+    company = ctk.CTkLabel(new_window, text="Company")
+    company_name = ctk.CTkEntry(new_window, placeholder_text="Enter company name here", height=40)
+
+
+    fname.bind("<FocusOut>", lambda event: valid_name(fname, lbl1, valid_first))
+    lname.bind("<FocusOut>", lambda event: valid_name(lname, lbl2, valid_last))
+    email.bind("<FocusOut>", lambda event: valid_email())
+    phone.bind("<FocusOut>", lambda event: valid_number())
+    username.bind("<FocusOut>", lambda event: valid_username())
+    company_name.bind("<FocusOut>", lambda event: save_comp())
+
+    def update_check_button():
+        if all([
+            valid_first.get(),
+            valid_last.get(),
+            valid_email_var.get(),
+            valid_phone.get(),
+            valid_user.get(),
+            valid_pass.get(),
+            valid_company.get()
+        ]):
+            check.configure(state="normal", fg_color="green")
+        else:
+            check.configure(state="disabled", fg_color="gray")
+
+    def accept_new_user():
+        new_member["name"] = {
+            "first": fname.get(),
+            "last": lname.get()
+        }
+
+        new_member["email"] = email.get()
+
+        area = area_dropdown.get()
+        new_member["phone"] = f"{area} {phone.get().strip()}"
+
+        new_member["username"] = username.get()
+        new_member["password"] = password.get()
+
+        if check_trader.get() == "on":
+            new_member["company"] = company_name.get()
+
+        if new_member["email"] in members:
+            add.configure(text="Email already in use")
+            add.grid()
+        elif new_member["username"] in members:
+            add.configure(text="Username aleady in use")
+            add.grid()
+        else:
+            members.append(new_member)
+            add.configure(text="New member added")
+            add.grid()
+
+            print(members)
+    
+
+
+    check = ctk.CTkButton(new_window, text="Check", height=40, state="disabled", fg_color="gray", command=accept_new_user)
+    check.grid(row=(new_row + 4), column=1, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    add = ctk.CTkLabel(new_window, text="")
 
 
 btn = ctk.CTkButton(root, text="add_account", command=on_click)

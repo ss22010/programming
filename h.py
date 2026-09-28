@@ -3,21 +3,33 @@ import customtkinter as ctk
 app = ctk.CTk()
 app.geometry("300x200")
 
-# 1. Create the checkbox in a disabled state so the user cannot click it
-system_checkbox = ctk.CTkCheckBox(app, text="System Controlled Only", state="disabled")
-system_checkbox.pack(pady=20)
 
-# 2. Use a function to change the state via system logic
-def toggle_checkbox_by_system():
-    # Check current state using the variable or checking check status
-    # Note: disabled widgets can still be modified by program methods
-    if system_checkbox.get() == 0:
-        system_checkbox.select()    # Ticks the box
-    else:
-        system_checkbox.deselect()  # Unticks the box
+def on_checkbox_toggle():
+  # Check the state of the variable
+  if check_var.get() == 1:
+    # Change to your desired color when checked
+    checkbox.configure(fg_color="green")
+  else:
+    # Change back or set to the disabled/unchecked color
+    checkbox.configure(fg_color="gray")
 
-# Button to simulate a system or background event triggering the change
-trigger_button = ctk.CTkButton(app, text="Simulate System Event", command=toggle_checkbox_by_system)
-trigger_button.pack(pady=20)
+
+# Create a StringVar or IntVar to track the value
+check_var = ctk.IntVar(value=1)  # Set to 1 if pre-ticked, 0 if not
+
+checkbox = ctk.CTkCheckBox(
+    master=app,
+    text="Disabled Checkbox",
+    state="disabled",
+    text_color="white",  # Color when normal
+    text_color_disabled="gray",  # Color when state="disabled"
+)
+checkbox.pack(padx=20, pady=20)
+
+
+btn = ctk.CTkButton(app, command=on_checkbox_toggle)
+btn.pack()
+# Optional: You can still call select() or toggle() programmatically
+# check_var.set(1) # updates state and triggers colors if handled
 
 app.mainloop()
