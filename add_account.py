@@ -84,6 +84,14 @@ country_codes = [
     "Vietnam (+84)"
 ]
 
+contain = [
+    "Password required",
+    "Must be greater than 5 characters long", 
+    "Must contain one or more special charcaters",
+    "Must contain one or more capital letters",
+    "Must contain one or more numbers"
+]
+
 new_member = {}
 
 root = ctk.CTk()
@@ -91,7 +99,7 @@ root = ctk.CTk()
 def on_click():
     new_window = ctk.CTkToplevel(master=root)
     new_window.title("add_acc_win")
-    new_window.geometry("550x500")
+    new_window.geometry("700x500")
 
     new_window.after(200, lambda: new_window.focus())
 
@@ -125,11 +133,6 @@ def on_click():
     lbl5.grid(row=4, column=0)
     username = ctk.CTkEntry(new_window, placeholder_text="Username", width=200)
     username.grid(row=4, column=1)
-
-    lbl6 = ctk.CTkLabel(new_window, text="Password", height=50, width=100)
-    lbl6.grid(row=5, column=0)
-    password = ctk.CTkEntry(new_window, placeholder_text="Password", width=200)
-    password.grid(row=5, column=1)
 
     def valid_number():
         selected_text = area_dropdown.get()
@@ -179,24 +182,77 @@ def on_click():
         elif check_user in new_member:
             lbl5.configure(text="USERNAME UNAVALIBLE")
         else:
-            lbl5.configure("VALID USERNAME")
+            lbl5.configure(text="VALID USERNAME")
 
-    def valid_password():
+    def valid_password(event):
         check_pass = password.get()
 
-        while True:
+        if check_pass:
+            password_rules[0].select()
+            password_rules[0].configure(text_color="green")
+        else:
+            password_rules[0].deselect()
+            password_rules[0].configure(text_color="gray")
 
-            if not check_pass:
-                lbl6.configure(text="PASSWORD REQUIRED")
-            elif len(check_pass) < 6:
-                lbl6.configure(text="LENGTH MUST BE > 5")
-            elif any(not char.isalnum() and not char.isspace() for char in check_pass):
-                lbl6.configure(text="MUST CONTAIN SPECIAL A CHARACTER")
-            elif any(not char.isupper() for char in check_pass):
-                lbl6.configure(text="MUST CONTAIN A CAPITAL LETTER")
-            else: 
-                lbl6.configure("VALID PASSOWRD")
-                return False
+            
+        if len(check_pass) > 5:
+            password_rules[1].select()
+            password_rules[1].configure(text_color="green")
+        else:
+            password_rules[1].deselect()
+            password_rules[1].configure(text_color="gray")
+
+        if any(not char.isalnum() and not char.isspace() for char in check_pass):
+            password_rules[2].select()
+            password_rules[2].configure(text_color="green")
+        else:
+            password_rules[2].deselect()
+            password_rules[2].configure(text_color="gray")
+
+        if any(char.isupper() for char in check_pass):
+            password_rules[3].select()
+            password_rules[3].configure(text_color="green")
+        else:
+            password_rules[3].deselect()
+            password_rules[3].configure(text_color="gray")
+
+        if any(char.isdigit() for char in check_pass):
+            password_rules[4].select()
+            password_rules[4].configure(text_color="green")
+        else:
+            password_rules[4].deselect()
+            password_rules[4].configure(text_color="gray")
+        
+        if all(var.get() == 1 for var in checked_var):
+            for rule in password_rules:
+                rule.grid_forget()
+            
+            lbl.grid(row=7, column=0)
+
+        else:
+            lbl.grid_forget()
+            for position, rule in enumerate(password_rules):
+                rule.grid(row=position + 7, column=0, sticky="w")
+            
+
+    password_rules = []
+    checked_var = []
+    for position, rule in enumerate(contain):
+        row = position + 7
+        var = ctk.IntVar()
+        checked_var.append(var)
+    
+        lbl_rule = ctk.CTkCheckBox(new_window, text=rule, variable=var, text_color="gray", state="disabled")
+        lbl_rule.grid(row=row, column=0, sticky="w")
+
+        password_rules.append(lbl_rule)
+        
+    lbl = ctk.CTkLabel(new_window, text="VALID PASSWORD")
+
+    password = ctk.CTkEntry(new_window, placeholder_text="Password", width=200)
+    password.grid(row=5, column=1)
+
+    password.bind("<KeyRelease>", valid_password)
 
 
     check = ctk.CTkButton(new_window, text="Check", command=lambda fname=fname, lname=lname, lbl1=lbl1, lbl2=lbl2: [valid_name(fname, lbl1), valid_name(lname, lbl2), valid_email(), valid_number(), valid_username(), valid_password()])
