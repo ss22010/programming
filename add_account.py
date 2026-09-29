@@ -359,7 +359,7 @@ def on_click():
     email.bind("<FocusOut>", lambda event: valid_email())
     phone.bind("<FocusOut>", lambda event: valid_number())
     username.bind("<FocusOut>", lambda event: valid_username())
-    company_name.bind("<FocusOut>", lambda event: save_comp())
+    company_name.bind("<KeyRelease>", lambda event: save_comp())
 
     def update_check_button():
         if all([
