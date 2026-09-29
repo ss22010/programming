@@ -92,7 +92,16 @@ contain = [
     "Must contain one or more numbers"
 ]
 
-members = []
+members = [{
+    "name": {
+        "first": "Sarah",
+        "last": "Shaw"
+    },
+    "email": "123@gmail.com",
+    "phone": "+64 0278293321",
+    "username": "sarahs123",
+    "password": "123!@#QWE"
+}]
 
 
 root = ctk.CTk()
@@ -196,7 +205,7 @@ def on_click():
         update_check_button()
 
     def valid_name(entry, label, valid_var):
-        name = entry.get()
+        name = entry.get().strip()
 
         if any(char.isdigit() for char in name):
             label.configure(text="INVALID NAME", text_color="red")
@@ -272,6 +281,7 @@ def on_click():
             for position, rule in enumerate(password_rules):
                 rule.grid(row=position + 12, column=1, columnspan=2, padx=10, sticky="w")
 
+            lbl6.configure(text="INVALID PASSWORD", text_color="red")
             valid_pass.set(False)
 
         update_check_button()
@@ -323,6 +333,7 @@ def on_click():
 
         if check_trader.get() == "on":
             if company_entry:
+                company.configure(text="Company", text_color="gray")
                 valid_company.set(True)
             else:
                 company.configure(text="COMPANY REQUIRED", text_color="red")
@@ -342,7 +353,7 @@ def on_click():
     company = ctk.CTkLabel(new_window, text="Company")
     company_name = ctk.CTkEntry(new_window, placeholder_text="Enter company name here", height=40)
 
-
+    #why i chose focus out instead of key release
     fname.bind("<FocusOut>", lambda event: valid_name(fname, lbl1, valid_first))
     lname.bind("<FocusOut>", lambda event: valid_name(lname, lbl2, valid_last))
     email.bind("<FocusOut>", lambda event: valid_email())
@@ -389,8 +400,8 @@ def on_click():
 
     def accept_new_user():
         new_member["name"] = {
-            "first": fname.get(),
-            "last": lname.get()
+            "first": fname.get().capitalize(),
+            "last": lname.get().capitalize()
         }
 
         new_member["email"] = email.get()
@@ -404,14 +415,14 @@ def on_click():
         if check_trader.get() == "on":
             new_member["company"] = company_name.get()
 
-        if new_member["email"] in members:
+        if any(member.get("email") == new_member["email"] for member in members):
             open_msg("email")
             
-        elif new_member["username"] in members:
+        elif any(member.get("username") == new_member["username"] for member in members):
             open_msg("username")
             
         else:
-            members.append(new_member)
+            members.append(new_member.copy())
             open_msg("success")
 
             print(members)

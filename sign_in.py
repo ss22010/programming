@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-members = {
+members = [{
     "name": {
         "first": "Sarah",
         "last": "Shaw"
@@ -9,7 +9,7 @@ members = {
     "phone": "+64 0278293321",
     "username": "sarahs123",
     "password": "123!@#QWE"
-}
+}]
 
 root = ctk.CTk()
 
