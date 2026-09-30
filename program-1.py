@@ -458,12 +458,63 @@ class Layout():
         self.container.columnconfigure(0, weight=1)
         self.container.columnconfigure(1, weight=1)
 
+        self.value_labels = []
+        self.check_vars = []
+
         self.create_card()
 
         self.card_index = 0
         self.create_private_content()
 
+        self.purchace_btn = ctk.CTkButton(self.private_frame, text="Purchace", command=self.purchace)
+        self.purchace_btn.pack(pady=(0, 20))
+
         lbl.pack_forget()
+
+    def purchace(self):
+        purchace = {}
+
+        for category, values in ADDITIONS.items():
+            purchace[category] = [item.copy() for item in values]
+
+        purchace["kitchen"] = [selections["kitchen"].copy()]
+
+        for room in ["bathroom", "living room"]:
+            purchace[room] = []
+
+            for item in TEXT[room]:
+                if item in selections.values():
+                    purchace[room].append(item.copy())
+            
+        if self.current_user not in purchaces:
+            purchaces[self.current_user] = []
+
+        purchaces[self.current_user].append(purchace)
+
+        ADDITIONS["sockets"][0]["value"] = 1
+        ADDITIONS["sockets"][1]["value"] = 0
+        ADDITIONS["bedrooms"][0]["value"] = 0
+        ADDITIONS["network_pts"][0]["value"] = 2
+
+        selections.clear()
+
+        for item, value_label in self.value_labels:
+            value_label.configure(text=str(item["value"]))
+
+        for var in self.check_vars:
+            var.set(False)
+
+        self.kitchen_var.set("Default")
+        selections["kitchen"] = TEXT["kitchen"][0]
+
+        msg_window = ctk.CTkToplevel(self.root)
+        msg_window.title("Purchase")
+
+        msg = ctk.CTkLabel(msg_window, text="Purchase successful!")
+        msg.pack(expand=True)
+
+        msg_window.after(5000, msg_window.destroy)
+
 
     def show_signed_in(self):
         self.signed_in = True
@@ -504,6 +555,8 @@ class Layout():
     def create_private_content(self):
         card_index = 0
 
+        self.kitchen_var = None
+
         for room, upgrades in TEXT.items():
             row = card_index // 2
             column = card_index % 2
@@ -517,6 +570,7 @@ class Layout():
 
             if room == "kitchen":
                 var = tk.StringVar(value=upgrades[0]["option"])
+                self.kitchen_var = var
             
                 def radio_ticked(var=var, upgrades=upgrades):
                     selected = next(item for item in upgrades if item["option"] == var.get())
@@ -533,6 +587,8 @@ class Layout():
             else:
                 for item in upgrades:
                     var = tk.BooleanVar(value=False)
+                    self.check_vars.append(var)
+
                     option = ctk.CTkCheckBox(bottom, text=item["text"], variable=var, command=lambda item=item, var=var: self.checkbox_ticked(item, var))
                     option.pack(anchor="w", padx=20, pady=2)
 
@@ -638,6 +694,8 @@ class Layout():
 
                 value_label = ctk.CTkLabel(controls, text=str(sub_value))
                 value_label.pack(side="left", padx=5)
+
+                self.value_labels.append((item, value_label))
 
                 plus_btn = ctk.CTkButton(controls, text="+", height=10, width=10, corner_radius=50, command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
                 plus_btn.pack(side="left", padx=5, pady=5)
@@ -910,22 +968,27 @@ class SignupWindow(ctk.CTkToplevel):
 
             self.update_check_button()
 
+
     def valid_email(self):
-        email_match = self.email.get()
+        email_match = self.email.get().strip()
         #talk about finding this and what it does
-        email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+        email_pattern = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
 
         #also talk about re.fullmatch()
-        if re.fullmatch(email_pattern, email_match):
-            self.lbl3.configure(text="Email", text_color="gray")
-            self.valid_email_var.set(True)
-        elif any(member.get("email") == email_match for member in self.members):
-            self.lbl3.configure(text="EMAIL ALREADY IN USE", text_color="red")
-            self.valid_email_var.set(False)
-        else:
+        if not re.fullmatch(email_pattern, email_match):
             self.lbl3.configure(text="INVALID EMAIL", text_color="red")
             self.valid_email_var.set(False)
+
+        elif any(member.get("email") == email_match for member in self.members if member is not self.editing_member):
+            self.lbl3.configure(text="EMAIL ALREADY IN USE", text_color="red")
+            self.valid_email_var.set(False)
+
+        else:
+            self.lbl3.configure(text="Email", text_color="gray")
+            self.valid_email_var.set(True)
+
         self.update_check_button()
+
 
     def valid_name(self, entry, label, valid_var):
         name = entry.get().strip()
@@ -950,24 +1013,6 @@ class SignupWindow(ctk.CTkToplevel):
         self.update_check_button()
 
 
-    def valid_email(self):
-        email_match = self.email.get()
-        email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
-
-        if not re.fullmatch(email_pattern, email_match):
-            self.lbl3.configure(text="INVALID EMAIL", text_color="red")
-            self.valid_email_var.set(False)
-
-        elif any(member.get("email") == email_match for member in members):
-            self.lbl3.configure(text="EMAIL ALREADY IN USE", text_color="red")
-            self.valid_email_var.set(False)
-
-        else:
-            self.lbl3.configure(text="Email", text_color="gray")
-            self.valid_email_var.set(True)
-
-        self.update_check_button()
-
     def valid_username(self):
         check_user = self.username.get()
 
@@ -975,7 +1020,7 @@ class SignupWindow(ctk.CTkToplevel):
             self.lbl5.configure(text="USERNAME REQUIRED", text_color="red")
             self.valid_user.set(False)
 
-        elif any(member.get("username") == check_user for member in members):
+        elif any(member.get("username") == check_user for member in self.members if member is not self.editing_member):            
             self.lbl5.configure(text="USERNAME ALREADY IN USE", text_color="red")
             self.valid_user.set(False)
 
@@ -1114,6 +1159,8 @@ class SignupWindow(ctk.CTkToplevel):
         if self.editing_member is not None:
             self.editing_member.clear()
             self.editing_member.update(updated_member)
+            self.open_msg()
+            print(members)
         
         else:
 
@@ -1244,7 +1291,7 @@ class ReceiptsWindow(ctk.CTkToplevel):
 
         signed_in_user = self.username
 
-        if not purchaces:
+        if not purchaces.get(signed_in_user):
             self.msg = ctk.CTkLabel(self.scroll_rec, text="You have made no purchaces yet")
             self.msg.grid()
             return
@@ -1262,7 +1309,7 @@ class ReceiptsWindow(ctk.CTkToplevel):
                 self.lbl1 = ctk.CTkLabel(self.scroll_rec, text="Default Settings")
                 self.lbl1.grid(column=0, row=row, sticky="w", padx=10)
             
-                self.price1 = ctk.CTkLabel(self.scroll_rec, text="$75,000.00")
+                self.price1 = ctk.CTkLabel(self.scroll_rec, text="$74,860.00")
                 self.price1.grid(column=1, row=row, sticky="e", padx=10)
 
                 row += 1
@@ -1315,6 +1362,7 @@ class ReceiptsWindow(ctk.CTkToplevel):
                             row += 1
 
                         break
+                total_price -= 140
 
                 lbl_line = ctk.CTkLabel(self.scroll_rec, text="----------------------------------------------------------------------")
                 lbl_line.grid(row=row, column=0, columnspan=2, sticky="new", padx=10)
@@ -1327,7 +1375,20 @@ class ReceiptsWindow(ctk.CTkToplevel):
                 lbl_total_price = ctk.CTkLabel(self.scroll_rec, text=f"${total_price:,.2f}")
                 lbl_total_price.grid(row=row, column=1, sticky="e", padx=10, pady=(0, 10))
 
+                row +=1
+
+                cancel_btn = ctk.CTkButton(self.scroll_rec, text=f"Cancel Order No.{house}", command=lambda house=house: self.cancel_order(house))
+                cancel_btn.grid(row=row, column=0, columnspan=2, pady=(0, 20))
+
                 row += 2
+    def cancel_order(self, house):
+
+        self.purchaces[self.username].pop(house - 1)
+
+        for widget in self.scroll_rec.winfo_children():
+            widget.destroy()
+
+        self.create_receipts_window()
 
 
 
