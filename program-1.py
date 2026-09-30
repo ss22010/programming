@@ -83,19 +83,266 @@ TEXT = {
 
 button_refs = []
 selections = {}
+in_user = ""
 
-purchaces = {}
+purchaces = {
 
-members = [{
-    "name": {
-        "first": "Sarah",
-        "last": "Shaw"
+    "sarahs123": [
+        {
+            "sockets": [
+                {
+                    "name": "1g",
+                    "value": 4,
+                    "price": 40
+                },
+                {
+                    "name": "2g",
+                    "value": 2,
+                    "price": 50
+                }
+            ],
+
+            "bedrooms": [
+                {
+                    "name": "number of heat pumps",
+                    "value": 2,
+                    "price": 1800
+                }
+            ],
+
+            "network_pts": [
+                {
+                    "name": "number of network points",
+                    "value": 4,
+                    "price": 50
+                }
+            ],
+
+            "kitchen": [
+                {
+                    "option": "Option B",
+                    "text": "As A plus induction hob",
+                    "price": 3500
+                }
+            ],
+
+            "bathroom": [
+                {
+                    "option": "upgrade",
+                    "text": "Tiles, Spa Bath, Shower, Tapware",
+                    "price": 2500
+                }
+            ],
+
+            "living room": [
+                {
+                    "option": "add",
+                    "text": "TV point plus satellite dish",
+                    "price": 250
+                },
+                {
+                    "option": "add",
+                    "text": "4.5 KW Heat pump",
+                    "price": 2500
+                }
+            ]
+        }
+    ],
+
+
+    "jamesw123": [
+
+        {
+            "sockets": [
+                {
+                    "name": "1g",
+                    "value": 6,
+                    "price": 40
+                },
+                {
+                    "name": "2g",
+                    "value": 3,
+                    "price": 50
+                }
+            ],
+
+            "bedrooms": [
+                {
+                    "name": "number of heat pumps",
+                    "value": 2,
+                    "price": 1800
+                }
+            ],
+
+            "network_pts": [
+                {
+                    "name": "number of network points",
+                    "value": 6,
+                    "price": 50
+                }
+            ],
+
+            "kitchen": [
+                {
+                    "option": "Option A",
+                    "text": "Upgrades units and worktop",
+                    "price": 2000
+                }
+            ],
+
+            "bathroom": [
+                {
+                    "option": "upgrade",
+                    "text": "Tiles, Spa Bath, Shower, Tapware",
+                    "price": 2500
+                }
+            ],
+
+            "living room": [
+                {
+                    "option": "add",
+                    "text": "TV point plus roof mounted aerial",
+                    "price": 250
+                }
+            ]
+        },
+
+
+        {
+            "sockets": [
+                {
+                    "name": "1g",
+                    "value": 3,
+                    "price": 40
+                },
+                {
+                    "name": "2g",
+                    "value": 4,
+                    "price": 50
+                }
+            ],
+
+            "bedrooms": [
+                {
+                    "name": "number of heat pumps",
+                    "value": 1,
+                    "price": 1800
+                }
+            ],
+
+            "network_pts": [
+                {
+                    "name": "number of network points",
+                    "value": 3,
+                    "price": 50
+                }
+            ],
+
+            "kitchen": [
+                {
+                    "option": "Option C",
+                    "text": "As A plus Deluxe appliance pack",
+                    "price": 6000
+                }
+            ],
+
+            "bathroom": [],
+
+            "living room": [
+                {
+                    "option": "add",
+                    "text": "4.5 KW Heat pump",
+                    "price": 2500
+                }
+            ]
+        },
+
+
+        {
+            "sockets": [
+                {
+                    "name": "1g",
+                    "value": 8,
+                    "price": 40
+                },
+                {
+                    "name": "2g",
+                    "value": 4,
+                    "price": 50
+                }
+            ],
+
+            "bedrooms": [
+                {
+                    "name": "number of heat pumps",
+                    "value": 2,
+                    "price": 1800
+                }
+            ],
+
+            "network_pts": [
+                {
+                    "name": "number of network points",
+                    "value": 8,
+                    "price": 50
+                }
+            ],
+
+            "kitchen": [
+                {
+                    "option": "Default",
+                    "text": "Default",
+                    "price": 0
+                }
+            ],
+
+            "bathroom": [
+                {
+                    "option": "upgrade",
+                    "text": "Tiles, Spa Bath, Shower, Tapware",
+                    "price": 2500
+                }
+            ],
+
+            "living room": [
+                {
+                    "option": "add",
+                    "text": "TV point plus satellite dish",
+                    "price": 250
+                },
+                {
+                    "option": "add",
+                    "text": "4.5 KW Heat pump",
+                    "price": 2500
+                }
+            ]
+        }
+    ]
+}
+
+members = [
+    {
+        "name": {
+            "first": "Sarah",
+            "last": "Shaw"
+        },
+        "email": "123@gmail.com",
+        "phone": "+64 0278293321",
+        "username": "sarahs123",
+        "password": "123!@#QWE"
     },
-    "email": "123@gmail.com",
-    "phone": "+64 0278293321",
-    "username": "sarahs123",
-    "password": "123!@#QWE"
-}]
+    {
+        "name": {
+            "first": "James",
+            "last": "Wilson"
+        },
+        "email": "james@gmail.com",
+        "phone": "+64 021234567",
+        "username": "jamesw123",
+        "password": "James123!@#",
+        "company": "Wilson Builders"
+    }
+]
 
 contain = [
     "Password required",
@@ -190,6 +437,7 @@ country_codes = [
 class Layout():
     def __init__(self, root):
         self.root = root
+        self.members = members
 
         self.root.title("Waimak Builders Co")
         self.root.geometry("1200x1000")
@@ -219,10 +467,14 @@ class Layout():
 
     def show_signed_in(self):
         self.signed_in = True
+
         self.auth_buttons.pack_forget()
         self.user_buttons.pack()
+
         self.private_frame.pack(expand=True, fill="both")
+
         lbl.pack(side="bottom", pady=10)
+
         self.total_price()
 
     def sign_out(self):
@@ -233,10 +485,12 @@ class Layout():
         lbl.pack_forget()
 
     def open_cart(self):
-        pass
+        ReceiptsWindow(self.root, purchaces, username=self.current_user, layout=self)
 
     def open_account(self):
-        pass
+        username = getattr(self, "current_user", None)
+        if username:
+            AccountWindow(self.root, username, self.members, self)
 
     def add_card(self, card):
 
@@ -321,7 +575,7 @@ class Layout():
         self.user_buttons = ctk.CTkFrame(banner, fg_color="transparent")
         self.user_buttons.pack_forget()
 
-        self.cart_btn = ctk.CTkButton(self.user_buttons, text="Cart", command=self.open_cart)
+        self.cart_btn = ctk.CTkButton(self.user_buttons, text="Receipts", command=self.open_cart)
         self.cart_btn.pack(side="left", padx=5)
 
         self.account_btn = ctk.CTkButton(self.user_buttons, text="Account", command=self.open_account)
@@ -476,16 +730,26 @@ class Layout():
         return total
 
 class SignupWindow(ctk.CTkToplevel):
-    def __init__(self, root, members):
+    def __init__(self, root, members, username=None, layout=None):
         super().__init__(root)
 
         self.members = members
         self.new_member = {}
-
+        self.username = username
+        self.layout = layout
+        self.editing_member = None
+        
+        if username is not None:
+            self.editing_member = next((member for member in self.members if member.get("username") == username), None)
+            if self.editing_member is None:
+                raise ValueError(f"No member found for username: {username}")
+            
         self.title("SIGN UP")
         self.geometry("320x650")
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
+
+        
 
         self.valid_first = ctk.BooleanVar(value=False)
         self.valid_last = ctk.BooleanVar(value=False)
@@ -496,6 +760,41 @@ class SignupWindow(ctk.CTkToplevel):
         self.valid_company = ctk.BooleanVar(value=True)
 
         self.make_sheet()
+    
+    def prefill_fields(self):
+        member = self.editing_member
+
+        self.fname.insert(0, member.get("name", {}).get("first", ""))
+        self.lname.insert(0, member.get("name", {}).get("last", ""))
+        self.email.insert(0, member.get("email", ""))
+
+        phone = member.get("phone", "")
+
+        if " " in phone:
+            area, number = phone.split(" ", 1)
+            self.area_dropdown.set(f"({area})")
+            self.phone.insert(0, number)
+
+        self.username.insert(0, member.get("username", ""))
+
+        if member.get("company"):
+            self.check_trader.set("on")
+            self.valid_trader()
+            self.company_name.insert(0, member["company"])
+            self.save_comp()
+        
+        self.password.insert(0, member.get("password", ""))
+        self.valid_password(None)
+
+        self.valid_name(self.fname, self.lbl1, self.valid_first)
+        self.valid_name(self.lname, self.lbl2, self.valid_last)
+        self.valid_email()
+        self.valid_number()
+
+        self.valid_user.set(True)
+        self.lbl5.configure(text="Username", text_color="gray")
+
+        self.update_check_button()
 
     def make_sheet(self):
         # First name Labels and Entries
@@ -585,7 +884,11 @@ class SignupWindow(ctk.CTkToplevel):
         self.username.bind("<FocusOut>", lambda event: self.valid_username())
         self.company_name.bind("<KeyRelease>", lambda event: self.save_comp())
 
-
+        if self.editing_member:
+            self.prefill_fields()
+            self.check.configure(text="Update", command=self.accept_new_user)
+        else:
+            self.check.configure(text="Sign Up", command=self.accept_new_user)
 
     def valid_number(self):
             area = self.area_dropdown.get()
@@ -616,7 +919,7 @@ class SignupWindow(ctk.CTkToplevel):
         if re.fullmatch(email_pattern, email_match):
             self.lbl3.configure(text="Email", text_color="gray")
             self.valid_email_var.set(True)
-        elif any(member.get("email") == email_match for member in members):
+        elif any(member.get("email") == email_match for member in self.members):
             self.lbl3.configure(text="EMAIL ALREADY IN USE", text_color="red")
             self.valid_email_var.set(False)
         else:
@@ -793,34 +1096,54 @@ class SignupWindow(ctk.CTkToplevel):
 
 
     def accept_new_user(self):
-        self.new_member["name"] = {
-            "first": self.fname.get().capitalize(),
-            "last": self.lname.get().capitalize()
+
+        updated_member = {
+            "name": {
+                "first": self.fname.get().strip().capitalize(),
+                "last": self.lname.get().strip().capitalize(),
+            },
+            "email": self.email.get().strip(),
+            "phone": f"{self.area_dropdown.get()} {self.phone.get().strip()}",
+            "username": self.username.get().strip(),
+            "password": self.password.get(),
         }
 
-        self.new_member["email"] = self.email.get()
-
-        area = self.area_dropdown.get()
-        self.new_member["phone"] = f"{area} {self.phone.get().strip()}"
-
-        self.new_member["username"] = self.username.get()
-        self.new_member["password"] = self.password.get()
-
         if self.check_trader.get() == "on":
-            self.new_member["company"] = self.company_name.get()
+            updated_member["company"] = self.company_name.get().strip()
 
-    
-            
-        members.append(self.new_member.copy())
-        self.open_msg()
+        if self.editing_member is not None:
+            self.editing_member.clear()
+            self.editing_member.update(updated_member)
+        
+        else:
 
-        print(members)
+            self.new_member["name"] = {
+                "first": self.fname.get().capitalize(),
+                "last": self.lname.get().capitalize()
+            }
+
+            self.new_member["email"] = self.email.get()
+
+            area = self.area_dropdown.get()
+            self.new_member["phone"] = f"{area} {self.phone.get().strip()}"
+
+            self.new_member["username"] = self.username.get()
+            self.new_member["password"] = self.password.get()
+
+            if self.check_trader.get() == "on":
+                self.new_member["company"] = self.company_name.get()
+
+            members.append(self.new_member.copy())
+            self.open_msg()
+            print(members)
+
 
 class SigninWindow(ctk.CTkToplevel):
     def __init__(self, root, members, layout):
         super().__init__(root)
         self.layout = layout
         self.members = members
+        self.current_user = ""
 
         self.title("SIGN IN")
         self.geometry("320x200")
@@ -853,16 +1176,19 @@ class SigninWindow(ctk.CTkToplevel):
         input_pass = self.password.get()
 
         if any(input_user == member["username"] and input_pass == member["password"] for member in self.members):
+            self.layout.current_user = input_user
             self.layout.show_signed_in()
-            
+
             errormsg = ctk.CTkToplevel(self)
             errormsg.title("Success")
 
-            error_lbl = ctk.CTkLabel(errormsg, text=f"Welcome back {self.username.get()}")
+            error_lbl = ctk.CTkLabel(errormsg, text=f"Welcome back {input_user}")
             error_lbl.pack()
 
             errormsg.after(5000, errormsg.destroy)
+
             self.destroy()
+
         else:
             errormsg = ctk.CTkToplevel(self)
             errormsg.title("Unsuccessful")
@@ -871,7 +1197,7 @@ class SigninWindow(ctk.CTkToplevel):
             error_lbl.pack()
 
             errormsg.after(5000, errormsg.destroy)
-    
+
     def filled_in(self, event):
         if self.password.get() and self.username.get():
             self.check.configure(state="normal", fg_color="green")
@@ -884,63 +1210,124 @@ class SigninWindow(ctk.CTkToplevel):
             if not self.password.get():
                 self.lbl6.configure(text="PASSWORD REQUIRED", text_color="red")
 
-class ReceiptsWindow():
+class AccountWindow(ctk.CTkToplevel):
+    def __init__(self, root, username, members, layout):
+        super().__init__(root)
+        self.layout = layout
+        self.members = members
+        self.username = username
+
+        SignupWindow(root, members, username=username, layout=layout)
+        self.destroy()
+       
+
+
+class ReceiptsWindow(ctk.CTkToplevel):
     def __init__(self, root, purchaces, username, layout):
         super().__init__(root)
         self.layout = layout
         self.purchaces = purchaces
         self.username = username
 
-        self.geometry("320x400")
-        self.title("RECEIPTS")
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
 
-        self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=1)
+        self.scroll_rec = ctk.CTkScrollableFrame(self)
+        self.scroll_rec.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+
+        self.geometry("500x400")
+        self.title("RECEIPTS")
 
         self.create_receipts_window()
     
-    def create_receipts_window(self, purchaces):
-        self.title = ctk.CTkLabel(self, text="--- Receipts ---")
-        self.title.grid()
-        signed_in_user = self.username.get()
+    def create_receipts_window(self):
+
+        signed_in_user = self.username
 
         if not purchaces:
-            self.msg = ctk.CTkLabel(self, text="You have made no purchaces yet")
+            self.msg = ctk.CTkLabel(self.scroll_rec, text="You have made no purchaces yet")
             self.msg.grid()
+            return
+
+
         else:
-            self.lbl1 = ctk.CTkLabel(self, text="Default Settings")
-            self.lbl1.grid(column=0, row=1, sticky="w")
-        
-            self.price1 = ctk.CTkLabel(self, text="$75,000.00")
-            self.price1.grid(column=1, row=1, sticky="e")
+            row = 0
+            for house, choices in enumerate(self.purchaces[signed_in_user], start=1):
 
-            x = 2
+                self.title = ctk.CTkLabel(self.scroll_rec, text=f"------- Receipt No.{house} -------")
+                self.title.grid(sticky="new", row=row, columnspan=2)
 
-            total_price = 75000
+                row += 1
 
-            for keys, values in purchaces[signed_in_user].items():
-                self.key_lbl = ctk.CTkLabel(self, text=f"{keys}")
-                self.key_lbl.grid(row=x, column=0, sticky="w")
+                self.lbl1 = ctk.CTkLabel(self.scroll_rec, text="Default Settings")
+                self.lbl1.grid(column=0, row=row, sticky="w", padx=10)
+            
+                self.price1 = ctk.CTkLabel(self.scroll_rec, text="$75,000.00")
+                self.price1.grid(column=1, row=row, sticky="e", padx=10)
 
-                self.price_lbl = ctk.CTkLabel(self, text=f"{values}")
-                self.price_lbl.grid(row=x, column=1, sticky="e")
+                row += 1
 
-                x += 1 
+                total_price = 75000
 
-                total_price += values
+                for category, items in choices.items():
 
-            if self.is_trader:
-                discount_value = total_price * 0.1
-                total_price -=discount_value
+                    for item in items:
+                        if "text" in item:
+                            lbl = ctk.CTkLabel(self.scroll_rec, text=f'{item["option"]}: {item["text"]} ({category})')
+                            lbl.grid(row=row, column=0, sticky="w", padx=10)
 
+                            price = item["price"]
 
-                
+                            lbl_price = ctk.CTkLabel(self.scroll_rec, text=f"${price:,.2f}")
+                            lbl_price.grid(row=row, column=1, sticky="e", padx=10)
 
+                            total_price += price
+                            row += 1
 
+                        elif "value" in item:
+                            lbl = ctk.CTkLabel(self.scroll_rec, text=f'{item["value"]} x {item["name"]} ({category})')
+                            lbl.grid(row=row, column=0, sticky="w", padx=10)
 
+                            price = item["value"] * item["price"]
 
+                            lbl_price = ctk.CTkLabel(self.scroll_rec, text=f"${price:,.2f}")
 
+                            lbl_price.grid(row=row, column=1, sticky="e", padx=10)
 
+                            total_price += price
+                            row += 1
+
+                for member in members:
+                    if member["username"] == signed_in_user:
+
+                        if "company" in member:
+
+                            discount_value = total_price * 0.1
+                            discount_price = total_price - discount_value
+
+                            lbl_discount = ctk.CTkLabel(self.scroll_rec, text="10% discount")
+                            lbl_discount.grid(row=row, column=0, sticky="w", padx=10)
+
+                            lbl_discount_price = ctk.CTkLabel(self.scroll_rec, text=f"${discount_value:,.2f}")
+                            lbl_discount_price.grid(row=row, column=1, sticky="e", padx=10)
+
+                            total_price = discount_price
+                            row += 1
+
+                        break
+
+                lbl_line = ctk.CTkLabel(self.scroll_rec, text="----------------------------------------------------------------------")
+                lbl_line.grid(row=row, column=0, columnspan=2, sticky="new", padx=10)
+
+                row += 1
+
+                lbl_total = ctk.CTkLabel(self.scroll_rec, text="Total Price:")
+                lbl_total.grid(row=row, column=0, sticky="w", padx=10, pady=(0, 20))
+
+                lbl_total_price = ctk.CTkLabel(self.scroll_rec, text=f"${total_price:,.2f}")
+                lbl_total_price.grid(row=row, column=1, sticky="e", padx=10, pady=(0, 10))
+
+                row += 2
 
 
 
