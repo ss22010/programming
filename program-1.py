@@ -84,6 +84,8 @@ TEXT = {
 button_refs = []
 selections = {}
 
+purchaces = {}
+
 members = [{
     "name": {
         "first": "Sarah",
@@ -198,8 +200,43 @@ class Layout():
 
         self.card_index = 0
 
+        self.signed_in = False
+
+        self.private_frame = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
+        self.private_frame.pack_forget()
+
+        self.container = tk.Frame(self.private_frame, bg="white")
+        self.container.pack(expand=True, fill="both", padx=30, pady=30)
+        self.container.columnconfigure(0, weight=1)
+        self.container.columnconfigure(1, weight=1)
+
         self.create_card()
-        self.create_int_card(ADDITIONS)
+
+        self.card_index = 0
+        self.create_private_content()
+
+        lbl.pack_forget()
+
+    def show_signed_in(self):
+        self.signed_in = True
+        self.auth_buttons.pack_forget()
+        self.user_buttons.pack()
+        self.private_frame.pack(expand=True, fill="both")
+        lbl.pack(side="bottom", pady=10)
+        self.total_price()
+
+    def sign_out(self):
+        self.signed_in = False
+        self.user_buttons.pack_forget()
+        self.auth_buttons.pack()
+        self.private_frame.pack_forget()
+        lbl.pack_forget()
+
+    def open_cart(self):
+        pass
+
+    def open_account(self):
+        pass
 
     def add_card(self, card):
 
@@ -209,57 +246,8 @@ class Layout():
         card.grid(row=row, column=column, padx=10, pady=10, sticky="nsew")
 
         self.card_index += 1
-
-    def checkbox_ticked(self, item, var):
-        key = (item["option"], item["text"])
-        if var.get():
-            selections[key] = item
-        else:
-            selections.pop(key, None)
-        self.total_price()
     
-    def open_signin(self):
-        SigninWindow(self.root, members)
-    
-    def on_click(self):
-        SignupWindow(self.root, members)
-
-    def create_card(self):
-        banner = tk.Frame(self.scroll_frame, bg="black", height=200)
-        banner.pack(fill="x", padx=30, pady=(0,10))
-        banner.pack_propagate(False)
-
-        title = tk.Label(banner, text="Waimak Builders Co", bg="black", fg="white", font=("Arial", 24, "bold"))
-        title.pack(expand=True)
-
-        description = ctk.CTkLabel(banner, text="The Waimak Build Co is a local company that supply a range of flatpack houses to the building trade and to retail customers. These are supplied as a kit that the customer then assembles themselves. The kit offers limited scope for customisation, to keep the cost as low as possible.", text_color="white", justify="center", wraplength=1000)
-        description.pack(pady=(0,10), padx=10)
-
-        signin_btn = ctk.CTkButton(banner, text="Sign Up", command=self.on_click)        
-        signin_btn.pack()
-
-        signup_btn = ctk.CTkButton(banner, text="Sign In", command=self.open_signin)
-        signup_btn.pack()
-
-        cart = ctk.CTkButton(banner, text="Cart")
-        cart.pack()
-
-        default_bar = tk.Frame(self.scroll_frame, bg="purple")
-        default_bar.pack(fill="x", padx=30, pady=(0,10))
-        default_bar.pack_propagate(False)
-
-        d_settings = ctk.CTkLabel(default_bar, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="white", justify="left", wraplength=500)
-        d_settings.grid(row=0, column=0, pady=30, padx=30)
-
-        d_img = ctk.CTkFrame(default_bar, fg_color="orange", height=100, width=400, corner_radius=18)
-        d_img.grid(row=0, column=1, pady=10, padx=10)
-
-        self.container = tk.Frame(self.scroll_frame, bg="white")
-        self.container.pack(expand=True, fill="both", padx=30, pady=30)
-
-        self.container.columnconfigure(0, weight=1)
-        self.container.columnconfigure(1, weight=1)
-
+    def create_private_content(self):
         card_index = 0
 
         for room, upgrades in TEXT.items():
@@ -294,6 +282,65 @@ class Layout():
                     option = ctk.CTkCheckBox(bottom, text=item["text"], variable=var, command=lambda item=item, var=var: self.checkbox_ticked(item, var))
                     option.pack(anchor="w", padx=20, pady=2)
 
+        self.create_int_card(ADDITIONS)
+
+    def checkbox_ticked(self, item, var):
+        key = (item["option"], item["text"])
+        if var.get():
+            selections[key] = item
+        else:
+            selections.pop(key, None)
+        self.total_price()
+    
+    def open_signin(self):
+        SigninWindow(self.root, members, self)
+    
+    def on_click(self):
+        SignupWindow(self.root, members)
+
+    def create_card(self):
+        banner = tk.Frame(self.scroll_frame, bg="black", height=200)
+        banner.pack(fill="x", padx=30, pady=(0,10))
+        banner.pack_propagate(False)
+
+        title = tk.Label(banner, text="Waimak Builders Co", bg="black", fg="white", font=("Arial", 24, "bold"))
+        title.pack(expand=True)
+
+        description = ctk.CTkLabel(banner, text="The Waimak Build Co is a local company that supply a range of flatpack houses to the building trade and to retail customers. These are supplied as a kit that the customer then assembles themselves. The kit offers limited scope for customisation, to keep the cost as low as possible.", text_color="white", justify="center", wraplength=1000)
+        description.pack(pady=(0,10), padx=10)
+
+        self.auth_buttons = ctk.CTkFrame(banner, fg_color="transparent")
+        self.auth_buttons.pack()
+
+        self.signin_btn = ctk.CTkButton(self.auth_buttons, text="Sign In", command=self.open_signin)
+        self.signin_btn.pack(side="left", padx=5)
+
+        self.signup_btn = ctk.CTkButton(self.auth_buttons, text="Sign Up", command=self.on_click)
+        self.signup_btn.pack(side="left", padx=5)
+
+        self.user_buttons = ctk.CTkFrame(banner, fg_color="transparent")
+        self.user_buttons.pack_forget()
+
+        self.cart_btn = ctk.CTkButton(self.user_buttons, text="Cart", command=self.open_cart)
+        self.cart_btn.pack(side="left", padx=5)
+
+        self.account_btn = ctk.CTkButton(self.user_buttons, text="Account", command=self.open_account)
+        self.account_btn.pack(side="left", padx=5)
+
+        self.signout_btn = ctk.CTkButton(self.user_buttons, text="Sign Out", command=self.sign_out)
+        self.signout_btn.pack(side="left", padx=5)
+
+        default_bar = tk.Frame(self.scroll_frame, bg="purple")
+        default_bar.pack(fill="x", padx=30, pady=(0,10))
+        default_bar.pack_propagate(False)
+
+        d_settings = ctk.CTkLabel(default_bar, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="white", justify="left", wraplength=500)
+        d_settings.grid(row=0, column=0, pady=30, padx=30)
+
+        d_img = ctk.CTkFrame(default_bar, fg_color="orange", height=100, width=400, corner_radius=18)
+        d_img.grid(row=0, column=1, pady=10, padx=10)
+
+
     def create_layout(self, container, card_type):
 
         card = ctk.CTkFrame(container, fg_color="pink", corner_radius=18)
@@ -311,7 +358,7 @@ class Layout():
         return card, bottom
 
     def create_int_card(self, ADDITIONS):
-        card_index = 0
+        card_index = self.card_index
         for key, values in ADDITIONS.items():
             row = card_index // 2
             column = card_index % 2
@@ -322,7 +369,6 @@ class Layout():
             self.add_card(card)
 
             card_index +=1
-
 
             for item in values:
 
@@ -344,6 +390,8 @@ class Layout():
 
                 minus_btn = ctk.CTkButton(controls, text="-", height=10, width=10, corner_radius=50, command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
                 minus_btn.pack(side="left", padx=5, pady=5)
+
+        self.card_index = card_index
 
     def plus_btn_action(self, item, value_label):
 
@@ -617,6 +665,25 @@ class SignupWindow(ctk.CTkToplevel):
 
         self.update_check_button()
 
+    def valid_username(self):
+        check_user = self.username.get()
+
+        if not check_user:
+            self.lbl5.configure(text="USERNAME REQUIRED", text_color="red")
+            self.valid_user.set(False)
+
+        elif any(member.get("username") == check_user for member in members):
+            self.lbl5.configure(text="USERNAME ALREADY IN USE", text_color="red")
+            self.valid_user.set(False)
+
+        else:
+            self.lbl5.configure(text="Username", text_color="gray")
+            self.valid_user.set(True)
+
+        self.update_check_button()
+
+
+
     def valid_password(self, event):
         check_pass = self.password.get()
 
@@ -720,6 +787,10 @@ class SignupWindow(ctk.CTkToplevel):
             error_lbl = ctk.CTkLabel(errormsg, text="New member added successfully!")
             error_lbl.pack()
 
+            errormsg.after(5000, errormsg.destroy)
+
+            self.destroy()
+
 
     def accept_new_user(self):
         self.new_member["name"] = {
@@ -741,14 +812,14 @@ class SignupWindow(ctk.CTkToplevel):
     
             
         members.append(self.new_member.copy())
-        self.open_msg("success")
+        self.open_msg()
 
         print(members)
 
 class SigninWindow(ctk.CTkToplevel):
-    def __init__(self, root, members):
+    def __init__(self, root, members, layout):
         super().__init__(root)
-
+        self.layout = layout
         self.members = members
 
         self.title("SIGN IN")
@@ -782,18 +853,24 @@ class SigninWindow(ctk.CTkToplevel):
         input_pass = self.password.get()
 
         if any(input_user == member["username"] and input_pass == member["password"] for member in self.members):
+            self.layout.show_signed_in()
+            
             errormsg = ctk.CTkToplevel(self)
             errormsg.title("Success")
 
             error_lbl = ctk.CTkLabel(errormsg, text=f"Welcome back {self.username.get()}")
             error_lbl.pack()
 
+            errormsg.after(5000, errormsg.destroy)
+            self.destroy()
         else:
             errormsg = ctk.CTkToplevel(self)
             errormsg.title("Unsuccessful")
 
             error_lbl = ctk.CTkLabel(errormsg, text="Incorrect password or username")
             error_lbl.pack()
+
+            errormsg.after(5000, errormsg.destroy)
     
     def filled_in(self, event):
         if self.password.get() and self.username.get():
@@ -806,6 +883,64 @@ class SigninWindow(ctk.CTkToplevel):
                 self.lbl5.configure(text="USERNAME REQUIRED", text_color="red")
             if not self.password.get():
                 self.lbl6.configure(text="PASSWORD REQUIRED", text_color="red")
+
+class ReceiptsWindow():
+    def __init__(self, root, purchaces, username, layout):
+        super().__init__(root)
+        self.layout = layout
+        self.purchaces = purchaces
+        self.username = username
+
+        self.geometry("320x400")
+        self.title("RECEIPTS")
+
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+
+        self.create_receipts_window()
+    
+    def create_receipts_window(self, purchaces):
+        self.title = ctk.CTkLabel(self, text="--- Receipts ---")
+        self.title.grid()
+        signed_in_user = self.username.get()
+
+        if not purchaces:
+            self.msg = ctk.CTkLabel(self, text="You have made no purchaces yet")
+            self.msg.grid()
+        else:
+            self.lbl1 = ctk.CTkLabel(self, text="Default Settings")
+            self.lbl1.grid(column=0, row=1, sticky="w")
+        
+            self.price1 = ctk.CTkLabel(self, text="$75,000.00")
+            self.price1.grid(column=1, row=1, sticky="e")
+
+            x = 2
+
+            total_price = 75000
+
+            for keys, values in purchaces[signed_in_user].items():
+                self.key_lbl = ctk.CTkLabel(self, text=f"{keys}")
+                self.key_lbl.grid(row=x, column=0, sticky="w")
+
+                self.price_lbl = ctk.CTkLabel(self, text=f"{values}")
+                self.price_lbl.grid(row=x, column=1, sticky="e")
+
+                x += 1 
+
+                total_price += values
+
+            if self.is_trader:
+                discount_value = total_price * 0.1
+                total_price -=discount_value
+
+
+                
+
+
+
+
+
+
 
 
 
