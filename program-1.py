@@ -513,7 +513,7 @@ class Layout():
         msg = ctk.CTkLabel(msg_window, text="Purchase successful!")
         msg.pack(expand=True)
 
-        msg_window.after(5000, msg_window.destroy)
+        msg_window.after(3000, msg_window.destroy)
 
 
     def show_signed_in(self):
@@ -1128,14 +1128,19 @@ class SignupWindow(ctk.CTkToplevel):
             self.check.configure(state="disabled", fg_color="gray") 
 
 
-    def open_msg(self):
-            errormsg = ctk.CTkToplevel(self)
+    def open_msg(self, editing_member):
+            errormsg = ctk.CTkToplevel(self.master)
             errormsg.title("Success")
 
-            error_lbl = ctk.CTkLabel(errormsg, text="New member added successfully!")
-            error_lbl.pack()
+            if editing_member == None:
+                error_lbl = ctk.CTkLabel(errormsg, text="New account added successfully!")
+                error_lbl.pack()
 
-            errormsg.after(5000, errormsg.destroy)
+            else: 
+                error_lbl = ctk.CTkLabel(errormsg, text="Account updated successfully!")
+                error_lbl.pack()
+
+            errormsg.after(3000, errormsg.destroy)
 
             self.destroy()
 
@@ -1159,7 +1164,7 @@ class SignupWindow(ctk.CTkToplevel):
         if self.editing_member is not None:
             self.editing_member.clear()
             self.editing_member.update(updated_member)
-            self.open_msg()
+            self.open_msg(self.editing_member)
             print(members)
         
         else:
@@ -1181,7 +1186,7 @@ class SignupWindow(ctk.CTkToplevel):
                 self.new_member["company"] = self.company_name.get()
 
             members.append(self.new_member.copy())
-            self.open_msg()
+            self.open_msg(None)
             print(members)
 
 
@@ -1226,24 +1231,24 @@ class SigninWindow(ctk.CTkToplevel):
             self.layout.current_user = input_user
             self.layout.show_signed_in()
 
-            errormsg = ctk.CTkToplevel(self)
+            errormsg = ctk.CTkToplevel(self.master)
             errormsg.title("Success")
 
             error_lbl = ctk.CTkLabel(errormsg, text=f"Welcome back {input_user}")
             error_lbl.pack()
 
-            errormsg.after(5000, errormsg.destroy)
+            errormsg.after(3000, errormsg.destroy)
 
             self.destroy()
 
         else:
-            errormsg = ctk.CTkToplevel(self)
+            errormsg = ctk.CTkToplevel(self.master)
             errormsg.title("Unsuccessful")
 
             error_lbl = ctk.CTkLabel(errormsg, text="Incorrect password or username")
             error_lbl.pack()
 
-            errormsg.after(5000, errormsg.destroy)
+            errormsg.after(3000, errormsg.destroy)
 
     def filled_in(self, event):
         if self.password.get() and self.username.get():
