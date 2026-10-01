@@ -673,11 +673,11 @@ class Layout():
 
         #talk about garbage collecting 
 
-        img1 = ctk.CTkImage(light_image=Image.open("img"), dark_image=Image.open("img"), size=(220, 150))
+        img1 = ctk.CTkImage(light_image=Image.open("house.png"), dark_image=Image.open("house.png"), size=(220, 150))
         d_img1 = ctk.CTkLabel(default_bar, image=img1, text="")
         d_img1.grid(row=0, column=1, pady=10, padx=10)
 
-        img2 = ctk.CTkImage(light_image=Image.open("img"), dark_image=Image.open("img"), size=(220, 150))
+        img2 = ctk.CTkImage(light_image=Image.open("floorplan.png"), dark_image=Image.open("floorplan.png"), size=(220, 150))
         d_img2 = ctk.CTkLabel(default_bar, image=img2, text="")
         d_img2.grid(row=0, column=2, pady=10, padx=10)
 
