@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import *
 import customtkinter as ctk
 import re
+from PIL import Image
 
 ADDITIONS = {
     "Sockets": [
@@ -680,9 +681,13 @@ class Layout():
 
         card = ctk.CTkFrame(container, fg_color="white", border_width=2, border_color="#FFD700", corner_radius=18)
 
-        image = ctk.CTkFrame(card, fg_color="blue", height=130)
-        image.pack(fill="both", expand=True, padx=12, pady=(12, 0))
-        image.pack_propagate(False)
+
+        my_image = ctk.CTkImage(light_image=Image.open("bathroom.avif"), dark_image=Image.open("bathroom.avif"), size=(150, 150))
+
+        image_label = ctk.CTkLabel(card, image=my_image, text="")
+        image_label.pack(fill="both", expand=True, padx=12, pady=(12, 0))
+        image_label.pack_propagate(False)
+        
 
         bottom = ctk.CTkFrame(card, fg_color="#ededed")
         bottom.pack(fill="both", expand=True, padx=12, pady=12)
