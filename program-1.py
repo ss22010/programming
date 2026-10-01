@@ -671,24 +671,43 @@ class Layout():
         d_settings = ctk.CTkLabel(default_bar, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="black", justify="left", wraplength=300)
         d_settings.grid(row=0, column=0, pady=30, padx=30)
 
-        d_img = ctk.CTkFrame(default_bar, fg_color="orange", height=150, width=220, corner_radius=18)
-        d_img.grid(row=0, column=1, pady=10, padx=10)
-        d_img = ctk.CTkFrame(default_bar, fg_color="orange", height=150, width=220, corner_radius=18)
-        d_img.grid(row=0, column=2, pady=10, padx=10)
+        #talk about garbage collecting 
+
+        img1 = ctk.CTkImage(light_image=Image.open("img"), dark_image=Image.open("img"), size=(220, 150))
+        d_img1 = ctk.CTkLabel(default_bar, image=img1, text="")
+        d_img1.grid(row=0, column=1, pady=10, padx=10)
+
+        img2 = ctk.CTkImage(light_image=Image.open("img"), dark_image=Image.open("img"), size=(220, 150))
+        d_img2 = ctk.CTkLabel(default_bar, image=img2, text="")
+        d_img2.grid(row=0, column=2, pady=10, padx=10)
+
+        self.default_images = [img1, img2]
 
 
     def create_layout(self, container, card_type):
+        image_paths = {
+            "kitchen": "tiny-house-kitchen-design.jpg",
+            "bathroom": "bathroom.avif",
+            "living room": "living room.jpg",
+            "Sockets": "socket.webp",
+            "Bedrooms": "heat pump.webp",
+            "Network Points": "new work pts.jpg",
+        }
 
         card = ctk.CTkFrame(container, fg_color="white", border_width=2, border_color="#FFD700", corner_radius=18)
 
+        path = image_paths.get(card_type)
+        if path:
+            pil_img = Image.open(path)
+            img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=(400, 200))
 
-        my_image = ctk.CTkImage(light_image=Image.open("bathroom.avif"), dark_image=Image.open("bathroom.avif"), size=(150, 150))
+            image_label = ctk.CTkLabel(card, image=img, text="", corner_radius=18)
+            image_label.pack(fill="both", expand=True, padx=12, pady=(12, 0))
 
-        image_label = ctk.CTkLabel(card, image=my_image, text="")
-        image_label.pack(fill="both", expand=True, padx=12, pady=(12, 0))
-        image_label.pack_propagate(False)
-        
-
+            if not hasattr(self, "images"):
+                self.images = []
+            self.images.append(img)
+            
         bottom = ctk.CTkFrame(card, fg_color="#ededed")
         bottom.pack(fill="both", expand=True, padx=12, pady=12)
 
