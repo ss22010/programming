@@ -4,7 +4,7 @@ import customtkinter as ctk
 import re
 
 ADDITIONS = {
-    "sockets": [
+    "Sockets": [
         {
             "name": "1g", 
             "value": 1, 
@@ -16,16 +16,16 @@ ADDITIONS = {
             "price": 50
         }
     ],
-    "bedrooms": [
+    "Bedrooms": [
         {
-            "name": "number of heat pumps", 
+            "name": "Number of heat pumps", 
             "value": 0, 
             "price": 1800
         }
     ],
-    "network_pts": [
+    "Network Points": [
         {
-            "name": "number of network points", 
+            "name": "Number of network points", 
             "value": 2, 
             "price": 50
         }
@@ -89,7 +89,7 @@ purchaces = {
 
     "sarahs123": [
         {
-            "sockets": [
+            "Sockets": [
                 {
                     "name": "1g",
                     "value": 4,
@@ -102,17 +102,17 @@ purchaces = {
                 }
             ],
 
-            "bedrooms": [
+            "Bedrooms": [
                 {
-                    "name": "number of heat pumps",
+                    "name": "Number of heat pumps",
                     "value": 2,
                     "price": 1800
                 }
             ],
 
-            "network_pts": [
+            "Network Points": [
                 {
-                    "name": "number of network points",
+                    "name": "Number of network points",
                     "value": 4,
                     "price": 50
                 }
@@ -153,7 +153,7 @@ purchaces = {
     "jamesw123": [
 
         {
-            "sockets": [
+            "Sockets": [
                 {
                     "name": "1g",
                     "value": 6,
@@ -166,17 +166,17 @@ purchaces = {
                 }
             ],
 
-            "bedrooms": [
+            "Bedrooms": [
                 {
-                    "name": "number of heat pumps",
+                    "name": "Number of heat pumps",
                     "value": 2,
                     "price": 1800
                 }
             ],
 
-            "network_pts": [
+            "Network Points": [
                 {
-                    "name": "number of network points",
+                    "name": "Number of network points",
                     "value": 6,
                     "price": 50
                 }
@@ -209,7 +209,7 @@ purchaces = {
 
 
         {
-            "sockets": [
+            "Sockets": [
                 {
                     "name": "1g",
                     "value": 3,
@@ -222,17 +222,17 @@ purchaces = {
                 }
             ],
 
-            "bedrooms": [
+            "Bedrooms": [
                 {
-                    "name": "number of heat pumps",
+                    "name": "Number of heat pumps",
                     "value": 1,
                     "price": 1800
                 }
             ],
 
-            "network_pts": [
+            "Network Points": [
                 {
-                    "name": "number of network points",
+                    "name": "Number of network points",
                     "value": 3,
                     "price": 50
                 }
@@ -259,7 +259,7 @@ purchaces = {
 
 
         {
-            "sockets": [
+            "Sockets": [
                 {
                     "name": "1g",
                     "value": 8,
@@ -272,17 +272,17 @@ purchaces = {
                 }
             ],
 
-            "bedrooms": [
+            "Bedrooms": [
                 {
-                    "name": "number of heat pumps",
+                    "name": "Number of heat pumps",
                     "value": 2,
                     "price": 1800
                 }
             ],
 
-            "network_pts": [
+            "Network Points": [
                 {
-                    "name": "number of network points",
+                    "name": "Number of network points",
                     "value": 8,
                     "price": 50
                 }
@@ -440,10 +440,10 @@ class Layout():
         self.members = members
 
         self.root.title("Waimak Builders Co")
-        self.root.geometry("1200x1000")
-        self.root.configure(bg="white")
+        self.root.geometry("1000x900")
+        self.root.configure(fg_color="white")
 
-        self.scroll_frame = ctk.CTkScrollableFrame(self.root)
+        self.scroll_frame = ctk.CTkScrollableFrame(self.root, fg_color="white", border_color="#FFD700")
         self.scroll_frame.pack(expand=True, fill="both", padx=30, pady=10)
 
         self.card_index = 0
@@ -491,10 +491,10 @@ class Layout():
 
         purchaces[self.current_user].append(purchace)
 
-        ADDITIONS["sockets"][0]["value"] = 1
-        ADDITIONS["sockets"][1]["value"] = 0
-        ADDITIONS["bedrooms"][0]["value"] = 0
-        ADDITIONS["network_pts"][0]["value"] = 2
+        ADDITIONS["Sockets"][0]["value"] = 1
+        ADDITIONS["Sockets"][1]["value"] = 0
+        ADDITIONS["Bedrooms"][0]["value"] = 0
+        ADDITIONS["Network Points"][0]["value"] = 2
 
         selections.clear()
 
@@ -519,19 +519,17 @@ class Layout():
     def show_signed_in(self):
         self.signed_in = True
 
-        self.auth_buttons.pack_forget()
-        self.user_buttons.pack()
+        self.auth_buttons.place_forget()
+        self.user_buttons.place(relx=1.0, y=10, anchor="ne")
 
         self.private_frame.pack(expand=True, fill="both")
-
         lbl.pack(side="bottom", pady=10)
-
         self.total_price()
 
     def sign_out(self):
         self.signed_in = False
-        self.user_buttons.pack_forget()
-        self.auth_buttons.pack()
+        self.user_buttons.place_forget()
+        self.auth_buttons.place(relx=1.0, y=10, anchor="ne")
         self.private_frame.pack_forget()
         lbl.pack_forget()
 
@@ -581,7 +579,7 @@ class Layout():
                 selections["kitchen"] = upgrades[0]
                 
                 for item in upgrades:
-                    option = ctk.CTkRadioButton(bottom, text=item["text"], variable=var, value=item["option"], command=radio_ticked)
+                    option = ctk.CTkRadioButton(bottom, text=f"{item["text"]} (${item["price"]})", text_color="black", variable=var, value=item["option"], command=radio_ticked)
                     option.pack(anchor="w", padx=20, pady=2)
 
             else:
@@ -589,7 +587,7 @@ class Layout():
                     var = tk.BooleanVar(value=False)
                     self.check_vars.append(var)
 
-                    option = ctk.CTkCheckBox(bottom, text=item["text"], variable=var, command=lambda item=item, var=var: self.checkbox_ticked(item, var))
+                    option = ctk.CTkCheckBox(bottom, text=f"{item["text"]} (${item["price"]})", text_color="black", variable=var, command=lambda item=item, var=var: self.checkbox_ticked(item, var))
                     option.pack(anchor="w", padx=20, pady=2)
 
         self.create_int_card(ADDITIONS)
@@ -602,6 +600,22 @@ class Layout():
             selections.pop(key, None)
         self.total_price()
     
+    def show_about(self):
+
+        errormsg = ctk.CTkToplevel(self.root)
+        errormsg.title("ABOUT")
+        errormsg.geometry("350x200")
+        errormsg.configure(fg_color="white")
+
+        title = ctk.CTkLabel(errormsg, text="About", text_color="#033805", font=("Georgia", 24, "bold"))
+        title.pack(anchor="center", pady=20)
+        
+        description = ctk.CTkLabel(errormsg, text="The Waimak Build Co is a local company that supply a range of flatpack houses to the building trade and to retail customers. These are supplied as a kit that the customer then assembles themselves. The kit offers limited scope for customisation, to keep the cost as low as possible.", text_color="black", justify="center", wraplength=280)
+        description.pack(anchor="center", padx=10)
+
+        
+
+    
     def open_signin(self):
         SigninWindow(self.root, members, self)
     
@@ -609,24 +623,24 @@ class Layout():
         SignupWindow(self.root, members)
 
     def create_card(self):
-        banner = tk.Frame(self.scroll_frame, bg="black", height=200)
+        banner = ctk.CTkFrame(self.scroll_frame, fg_color="white", height=400)
         banner.pack(fill="x", padx=30, pady=(0,10))
         banner.pack_propagate(False)
 
-        title = tk.Label(banner, text="Waimak Builders Co", bg="black", fg="white", font=("Arial", 24, "bold"))
+        title = ctk.CTkLabel(banner, text="Waimak Builders Co", text_color="#033805", font=("Georgia", 44, "bold"))
         title.pack(expand=True)
 
-        description = ctk.CTkLabel(banner, text="The Waimak Build Co is a local company that supply a range of flatpack houses to the building trade and to retail customers. These are supplied as a kit that the customer then assembles themselves. The kit offers limited scope for customisation, to keep the cost as low as possible.", text_color="white", justify="center", wraplength=1000)
-        description.pack(pady=(0,10), padx=10)
-
         self.auth_buttons = ctk.CTkFrame(banner, fg_color="transparent")
-        self.auth_buttons.pack()
+        self.auth_buttons.place(relx=1.0, y=10, anchor="ne")
 
         self.signin_btn = ctk.CTkButton(self.auth_buttons, text="Sign In", command=self.open_signin)
-        self.signin_btn.pack(side="left", padx=5)
+        self.signin_btn.pack(side="right", padx=5, pady=5)
 
         self.signup_btn = ctk.CTkButton(self.auth_buttons, text="Sign Up", command=self.on_click)
-        self.signup_btn.pack(side="left", padx=5)
+        self.signup_btn.pack(side="right", padx=5, pady=5)
+
+        self.about_btn = ctk.CTkButton(self.auth_buttons, text="About", command=self.show_about)
+        self.about_btn.pack(side="right", padx=5, pady=5)
 
         self.user_buttons = ctk.CTkFrame(banner, fg_color="transparent")
         self.user_buttons.pack_forget()
@@ -635,34 +649,45 @@ class Layout():
         self.cart_btn.pack(side="left", padx=5)
 
         self.account_btn = ctk.CTkButton(self.user_buttons, text="Account", command=self.open_account)
-        self.account_btn.pack(side="left", padx=5)
+        self.account_btn.pack(side="right", padx=5)
 
         self.signout_btn = ctk.CTkButton(self.user_buttons, text="Sign Out", command=self.sign_out)
-        self.signout_btn.pack(side="left", padx=5)
+        self.signout_btn.pack(side="right", padx=5)
 
-        default_bar = tk.Frame(self.scroll_frame, bg="purple")
-        default_bar.pack(fill="x", padx=30, pady=(0,10))
+        self.about_btn = ctk.CTkButton(self.user_buttons, text="About", command=self.show_about)
+        self.about_btn.pack(side="right", padx=5, pady=5)
+
+        top_border = ctk.CTkFrame(self.scroll_frame, height=2, fg_color="#FFD700")
+        top_border.pack(side="top", fill="x")
+
+        default_bar = ctk.CTkFrame(self.scroll_frame, fg_color="white")
+        default_bar.pack(fill="x", pady=(0,10))
         default_bar.pack_propagate(False)
 
-        d_settings = ctk.CTkLabel(default_bar, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="white", justify="left", wraplength=500)
+        top_border2 = ctk.CTkFrame(self.scroll_frame, height=2, fg_color="#FFD700")
+        top_border2.pack(side="top", fill="x")
+
+        d_settings = ctk.CTkLabel(default_bar, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="black", justify="left", wraplength=300)
         d_settings.grid(row=0, column=0, pady=30, padx=30)
 
-        d_img = ctk.CTkFrame(default_bar, fg_color="orange", height=100, width=400, corner_radius=18)
+        d_img = ctk.CTkFrame(default_bar, fg_color="orange", height=150, width=220, corner_radius=18)
         d_img.grid(row=0, column=1, pady=10, padx=10)
+        d_img = ctk.CTkFrame(default_bar, fg_color="orange", height=150, width=220, corner_radius=18)
+        d_img.grid(row=0, column=2, pady=10, padx=10)
 
 
     def create_layout(self, container, card_type):
 
-        card = ctk.CTkFrame(container, fg_color="pink", corner_radius=18)
+        card = ctk.CTkFrame(container, fg_color="white", border_width=2, border_color="#FFD700", corner_radius=18)
 
         image = ctk.CTkFrame(card, fg_color="blue", height=130)
         image.pack(fill="both", expand=True, padx=12, pady=(12, 0))
         image.pack_propagate(False)
 
-        bottom = ctk.CTkFrame(card, fg_color="purple")
+        bottom = ctk.CTkFrame(card, fg_color="#ededed")
         bottom.pack(fill="both", expand=True, padx=12, pady=12)
 
-        title = ctk.CTkLabel(bottom, text=card_type.upper(), font=("Times", 18, "bold"))
+        title = ctk.CTkLabel(bottom, text=card_type.upper(), text_color="#033805", font=("Georgia", 18, "bold"))
         title.pack(anchor="w", padx=15, pady=10)
 
         return card, bottom
@@ -680,6 +705,13 @@ class Layout():
 
             card_index +=1
 
+            if key == "Sockets":
+                lbl = ctk.CTkLabel(bottom, text="The maximum number of extra sockets in the build is 12 (1G + 2G total)", text_color="black", justify="left", wraplength=350)
+                lbl.pack(anchor="w", padx=10)
+            elif key == "Network Points":
+                lbl = ctk.CTkLabel(bottom, text="Requires the addition of a loft mounted 8 port 10/100/1000 network switch ($100)", text_color="black", justify="left", wraplength=350)
+                lbl.pack(anchor="w", padx=10)
+
             for item in values:
 
                 controls = ctk.CTkFrame(bottom, fg_color="transparent")
@@ -689,19 +721,19 @@ class Layout():
                 sub_value = item["value"]
                 price = item["price"]
 
-                key_label = ctk.CTkLabel(controls, text=f"{sub_key} (${price})")
-                key_label.pack(side="left", padx=5)
+                key_label = ctk.CTkLabel(controls, text=f"{sub_key} (${price})", text_color="black")
+                key_label.pack(side="left", padx=10)
 
-                value_label = ctk.CTkLabel(controls, text=str(sub_value))
-                value_label.pack(side="left", padx=5)
+                value_label = ctk.CTkLabel(controls, text=str(sub_value), text_color="black")
+                value_label.pack(side="left", padx=10)
 
                 self.value_labels.append((item, value_label))
 
                 plus_btn = ctk.CTkButton(controls, text="+", height=10, width=10, corner_radius=50, command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
-                plus_btn.pack(side="left", padx=5, pady=5)
+                plus_btn.pack(side="left", padx=10, pady=5)
 
                 minus_btn = ctk.CTkButton(controls, text="-", height=10, width=10, corner_radius=50, command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
-                minus_btn.pack(side="left", padx=5, pady=5)
+                minus_btn.pack(side="left", padx=10, pady=5)
 
         self.card_index = card_index
 
@@ -716,17 +748,17 @@ class Layout():
 
                 total = sum(dictionary["value"] for dictionary in values)
 
-                if category == "sockets":
+                if category == "Sockets":
                     limit = 12
 
-                elif category == "bedrooms":
+                elif category == "Bedrooms":
                     limit = 2
 
-                elif category == "network_pts":
+                elif category == "Network Points":
                     limit = 8
 
                 if total >= limit:
-                    value_label.configure(text=f"{current_value} maximum limit reached")
+                    value_label.configure(text=f"{current_value} maximum limit reached", text_color="black")
                 else:
                     item["value"] = new_value
                     value_label.configure(text=str(new_value))
@@ -746,13 +778,13 @@ class Layout():
 
                 total = sum(dictionary["value"] for dictionary in values)
 
-                if category == "sockets":
+                if category == "Sockets":
                     minimum = 1
 
-                elif category == "bedrooms":
+                elif category == "Bedrooms":
                     minimum = 0
 
-                elif category == "network_pts":
+                elif category == "Network Points":
                     minimum = 2
 
                 if new_value < 0:
@@ -783,7 +815,7 @@ class Layout():
             else:
                 total += item["value"] * item["price"]
 
-        lbl.configure(text=f"Total price: ${total:,.2f}")
+        lbl.configure(text=f"Total price: ${total:,.2f}", text_color="black")
 
         return total
 
@@ -1343,11 +1375,21 @@ class ReceiptsWindow(ctk.CTkToplevel):
                             price = item["value"] * item["price"]
 
                             lbl_price = ctk.CTkLabel(self.scroll_rec, text=f"${price:,.2f}")
-
                             lbl_price.grid(row=row, column=1, sticky="e", padx=10)
 
                             total_price += price
                             row += 1
+
+                            if category == "Network Points" and item["value"] > 2:
+                                lbl = ctk.CTkLabel(self.scroll_rec, text="Loft mounted 8 port 10/100/1000 network switch")
+                                lbl.grid(row=row, column=0,sticky="w", padx=10)
+
+                                lbl_price = ctk.CTkLabel(self.scroll_rec, text=f"$100")
+                                lbl_price.grid(row=row, column=1, sticky="e", padx=10)
+
+                                total_price += 100
+                                row += 1 
+
 
                 for member in members:
                     if member["username"] == signed_in_user:
