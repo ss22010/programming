@@ -3,6 +3,9 @@ from tkinter import *
 import customtkinter as ctk
 import re
 from PIL import Image
+import random
+import string
+from datetime import date
 
 ADDITIONS = {
     "Sockets": [
@@ -89,7 +92,12 @@ in_user = ""
 purchaces = {
 
     "sarahs123": [
+        
         {
+            "address": "123 Main Street",
+            "date": "01/01/2023",
+            "code": "q2wk09",
+            "total_price": 100935.50,
             "Sockets": [
                 {
                     "name": "1g",
@@ -153,7 +161,12 @@ purchaces = {
 
     "jamesw123": [
 
+
         {
+            "address": "456 Elm Street",
+            "date": "02/01/2023",
+            "code": "j8gs6s",
+            "total_price": 86923.90,
             "Sockets": [
                 {
                     "name": "1g",
@@ -210,6 +223,10 @@ purchaces = {
 
 
         {
+            "address": "566 James Street",
+            "date": "03/01/2023",
+            "code": "k9h3l2",
+            "total_price": 88714.45,
             "Sockets": [
                 {
                     "name": "1g",
@@ -260,6 +277,10 @@ purchaces = {
 
 
         {
+            "address": "444 Queen Street",
+            "date": "02/19/2023",
+            "code": "p4r7t1",
+            "total_price": 87679.45,
             "Sockets": [
                 {
                     "name": "1g",
@@ -327,6 +348,7 @@ members = [
             "first": "Sarah",
             "last": "Shaw"
         },
+        "address": "123 Main Street",
         "email": "123@gmail.com",
         "phone": "+64 0278293321",
         "username": "sarahs123",
@@ -337,6 +359,7 @@ members = [
             "first": "James",
             "last": "Wilson"
         },
+        "address": "456 Elm Street",
         "email": "james@gmail.com",
         "phone": "+64 021234567",
         "username": "jamesw123",
@@ -468,13 +491,23 @@ class Layout():
         self.card_index = 0
         self.create_private_content()
 
-        self.purchace_btn = ctk.CTkButton(self.private_frame, text="Purchace", border_width=2, fg_color="#b86e6d", border_color="#ffd5d4", hover_color="#a06160", command=self.purchace)
+        self.lbladdy = ctk.CTkLabel(self.private_frame, text="Delivery Address:", text_color="black", justify="left")
+        self.lbladdy.pack()
+        self.address_line = ctk.CTkEntry(self.private_frame, text_color="black", fg_color="transparent", border_width=2, border_color="#ffd5d4", width=300, placeholder_text="Enter Delivery Address")
+        self.address_line.pack(pady=(0, 10))
+        self.address_line.bind("<KeyRelease>", lambda event: self.add_addy())
+
+        self.purchace_btn = ctk.CTkButton(self.private_frame, text="Purchace", state="disabled", border_width=2, fg_color="#b86e6d", border_color="#ffd5d4", hover_color="#a06160", width=300,command=self.purchace)
         self.purchace_btn.pack(pady=(0, 20))
 
         lbl.pack_forget()
 
     def purchace(self):
         purchace = {}
+
+        purchace["address"] = self.address_line.get().strip()
+        purchace["date"] = date.today().strftime("%d/%m/%Y")
+        purchace["code"] = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
 
         for category, values in ADDITIONS.items():
             purchace[category] = [item.copy() for item in values]
@@ -509,6 +542,9 @@ class Layout():
         self.kitchen_var.set("Default")
         selections["kitchen"] = TEXT["kitchen"][0]
 
+        lbl.configure(text="Total price: $75,000.00")
+        purchace["total_price"] = self.total_price()
+
         msg_window = ctk.CTkToplevel(self.root)
         msg_window.title("Purchase")
 
@@ -517,12 +553,24 @@ class Layout():
 
         msg_window.after(3000, msg_window.destroy)
 
+    def add_addy(self):
+        address_entry = self.address_line.get().strip()
+
+        if not address_entry:
+            self.lbladdy.configure(text="ADDRESS REQUIRED", text_color="red")
+            self.purchace_btn.configure(state="disabled", fg_color="gray", border_color="gray", hover_color="gray")
+
+
+        else:
+            self.lbladdy.configure(text="Delivery Address:", text_color="black")
+            self.purchace_btn.configure(state="normal", fg_color="#b86e6d", border_color="#ffd5d4", hover_color="#a06160")
+
 
     def show_signed_in(self):
         self.signed_in = True
 
         self.auth_buttons.grid_forget()
-        self.user_buttons.grid(row=0, column=0, sticky="e")
+        self.user_buttons.grid(row=0, pady=5, column=0, sticky="e")
 
         self.private_frame.grid(row=2, column=0, sticky="nsew")
         lbl.pack(side="bottom", pady=10)
@@ -532,7 +580,7 @@ class Layout():
     def sign_out(self):
         self.signed_in = False
         self.user_buttons.grid_forget()
-        self.auth_buttons.grid(row=0, column=0, sticky="e")
+        self.auth_buttons.grid(row=0, pady=5, column=0, sticky="e")
 
         self.private_frame.grid_forget()
         lbl.pack_forget()
@@ -617,6 +665,8 @@ class Layout():
         description = ctk.CTkLabel(errormsg, text="The Waimak Build Co is a local company that supply a range of flatpack houses to the building trade and to retail customers. These are supplied as a kit that the customer then assembles themselves. The kit offers limited scope for customisation, to keep the cost as low as possible.", text_color="black", justify="center", wraplength=280)
         description.pack(anchor="center", padx=10)
 
+    def open_admin(self):
+        AdminWindow(self.root, members, self)
     
     def open_signin(self):
         SigninWindow(self.root, members, self)
@@ -639,16 +689,19 @@ class Layout():
         title.grid(row=1, column=0, sticky="w")
 
         self.auth_buttons = ctk.CTkFrame(act_banner, fg_color="transparent")
-        self.auth_buttons.grid(row=0, column=0, sticky="e")
+        self.auth_buttons.grid(row=0, pady=5, column=0, sticky="e")
 
         self.signin_btn = ctk.CTkButton(self.auth_buttons, text="Sign In", command=self.open_signin, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
-        self.signin_btn.grid(row=0, padx=5, pady=5, column=3)
+        self.signin_btn.grid(row=0, padx=5, column=3)
 
         self.signup_btn = ctk.CTkButton(self.auth_buttons, text="Sign Up", command=self.on_click, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
-        self.signup_btn.grid(row=0, padx=5, pady=5, column=4)
+        self.signup_btn.grid(row=0, padx=5, column=4)
+
+        self.admin_btn = ctk.CTkButton(self.auth_buttons, text="Admin", command=self.open_admin, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
+        self.admin_btn.grid(row=0, padx=5, column=1)
 
         self.about_btn = ctk.CTkButton(self.auth_buttons, text="About", command=self.show_about, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
-        self.about_btn.grid(row=0, padx=5, pady=5, column=2)
+        self.about_btn.grid(row=0, padx=5, column=2)
 
         self.user_buttons = ctk.CTkFrame(act_banner, fg_color="transparent")
         self.user_buttons.grid(row=0, column=0, sticky="e")
@@ -741,22 +794,28 @@ class Layout():
                 controls = ctk.CTkFrame(bottom, fg_color="transparent")
                 controls.pack(fill="x")
 
+                label_frame = ctk.CTkFrame(controls, fg_color="transparent")
+                label_frame.pack(side="left")
+
+                button_frame = ctk.CTkFrame(controls, fg_color="transparent")
+                button_frame.pack(side="right")
+
                 sub_key = item["name"]
                 sub_value = item["value"]
                 price = item["price"]
 
-                key_label = ctk.CTkLabel(controls, text=f"{sub_key} (${price})", text_color="white")
-                key_label.pack(side="left", padx=10)
+                key_label = ctk.CTkLabel(label_frame, text=f"{sub_key} (${price})", text_color="white")
+                key_label.pack(anchor="w", padx=10)
 
-                value_label = ctk.CTkLabel(controls, text=str(sub_value), text_color="white")
-                value_label.pack(side="left", padx=10)
+                value_label = ctk.CTkLabel(label_frame, text=str(sub_value), text_color="white", font=("Georgia", 14, "bold"), fg_color="#b86e6d", corner_radius=10, width=50, height=30)
+                value_label.pack(anchor="w", padx=10)
 
                 self.value_labels.append((item, value_label))
 
-                plus_btn = ctk.CTkButton(controls, text="+", height=10, width=10, corner_radius=50, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d", command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
+                plus_btn = ctk.CTkButton(button_frame, text="+", height=10, width=10, corner_radius=50, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d", command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
                 plus_btn.pack(side="left", padx=10, pady=5)
 
-                minus_btn = ctk.CTkButton(controls, text="-", height=10, width=10, corner_radius=50, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d", command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
+                minus_btn = ctk.CTkButton(button_frame, text="-", height=10, width=10, corner_radius=50, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d", command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
                 minus_btn.pack(side="left", padx=10, pady=5)
 
         self.card_index = card_index
@@ -859,7 +918,7 @@ class SignupWindow(ctk.CTkToplevel):
                 raise ValueError(f"No member found for username: {username}")
             
         self.title("SIGN UP")
-        self.geometry("320x650")
+        self.geometry("320x700")
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
 
@@ -868,10 +927,12 @@ class SignupWindow(ctk.CTkToplevel):
         self.valid_first = ctk.BooleanVar(value=False)
         self.valid_last = ctk.BooleanVar(value=False)
         self.valid_email_var = ctk.BooleanVar(value=False)
+        self.valid_address_var = ctk.BooleanVar(value=False)
         self.valid_phone = ctk.BooleanVar(value=False)
         self.valid_user = ctk.BooleanVar(value=False)
         self.valid_pass = ctk.BooleanVar(value=False)
         self.valid_company = ctk.BooleanVar(value=True)
+
 
         self.make_sheet()
     
@@ -880,6 +941,7 @@ class SignupWindow(ctk.CTkToplevel):
 
         self.fname.insert(0, member.get("name", {}).get("first", ""))
         self.lname.insert(0, member.get("name", {}).get("last", ""))
+        self.address.insert(0, member.get("address", ""))
         self.email.insert(0, member.get("email", ""))
 
         phone = member.get("phone", "")
@@ -923,11 +985,17 @@ class SignupWindow(ctk.CTkToplevel):
         self.lname = ctk.CTkEntry(self, placeholder_text="Enter lastname", height=40)
         self.lname.grid(row=3, column=1, columnspan=2, sticky="ew", padx=10)
 
+        # User address
+        self.lbl20 = ctk.CTkLabel(self, text="Address", anchor="w")
+        self.lbl20.grid(row=4, column=1, sticky="w", padx=10)
+        self.address = ctk.CTkEntry(self, placeholder_text="Enter Address", height=40)
+        self.address.grid(row=5, column=1, columnspan=2, sticky="ew", padx=10)
+
         # Email Labels and Entries
         self.lbl3 = ctk.CTkLabel(self, text="Email Address", anchor="w")
-        self.lbl3.grid(row=4, column=1, sticky="w", padx=10)
+        self.lbl3.grid(row=6, column=1, sticky="w", padx=10)
         self.email = ctk.CTkEntry(self, placeholder_text="Enter email address", height=40)
-        self.email.grid(row=5, column=1, columnspan=2, sticky="ew", padx=10)
+        self.email.grid(row=7, column=1, columnspan=2, sticky="ew", padx=10)
 
         # Selecting Area Codes 
         def chosen_area(choice):
@@ -940,26 +1008,26 @@ class SignupWindow(ctk.CTkToplevel):
 
         # Phone Number Labels and Entries
         self.lbl4 = ctk.CTkLabel(self, text="Phone Number", anchor="w")
-        self.lbl4.grid(row=6, column=1, columnspan=2, sticky="w", padx=10)
+        self.lbl4.grid(row=8, column=1, columnspan=2, sticky="w", padx=10)
         self.area_dropdown = ctk.CTkComboBox(self, values=country_codes, state="readonly", height=40, command=chosen_area)
         self.area_dropdown.set("(+64)")
         self.selected_country.set("New Zealand (+64)")
-        self.area_dropdown.grid(row=7, column=1, sticky="ew", padx=(10, 5))
+        self.area_dropdown.grid(row=9, column=1, sticky="ew", padx=(10, 5))
         self.phone = ctk.CTkEntry(self, placeholder_text="Enter Phone Number", height=40)
-        self.phone.grid(row=7, column=2, sticky="ew", padx=(5, 10))
+        self.phone.grid(row=9, column=2, sticky="ew", padx=(5, 10))
 
         # Username Labels and Entries
         self.lbl5 = ctk.CTkLabel(self, text="Username", anchor="w")
-        self.lbl5.grid(row=8, column=1, columnspan=2, sticky="w", padx=10)
+        self.lbl5.grid(row=10, column=1, columnspan=2, sticky="w", padx=10)
         self.username = ctk.CTkEntry(self, placeholder_text="Username", height=40)
-        self.username.grid(row=9, column=1, columnspan=2, sticky="ew", padx=10) 
+        self.username.grid(row=11, column=1, columnspan=2, sticky="ew", padx=10) 
 
         # Checking quality of Password
         self.password_rules = []
         self.checked_var = []
 
         for position, rule in enumerate(contain):
-            row = position + 12
+            row = position + 14
 
             var = ctk.IntVar()
             self.checked_var.append(var)
@@ -971,12 +1039,12 @@ class SignupWindow(ctk.CTkToplevel):
 
         # Password Labels and Entries
         self.lbl6 = ctk.CTkLabel(self, text="Password", anchor="w")
-        self.lbl6.grid(row=10, column=1, sticky="w", padx=10)
+        self.lbl6.grid(row=12, column=1, sticky="w", padx=10)
         self.password = ctk.CTkEntry(self, placeholder_text="Password", height=40)
-        self.password.grid(row=11, column=1, columnspan=2, sticky="ew", padx=10)
+        self.password.grid(row=13, column=1, columnspan=2, sticky="ew", padx=10)
         self.password.bind("<KeyRelease>", self.valid_password)
 
-        self.new_row = len(self.password_rules) + 12
+        self.new_row = len(self.password_rules) + 14
 
         # Traders Labels and Entries if they choose that 
         self.check_trader = ctk.StringVar(value="off")
@@ -988,11 +1056,12 @@ class SignupWindow(ctk.CTkToplevel):
 
         # Check to see if the information provided in the functions is valid
         self.check = ctk.CTkButton(self, text="Check", height=40, state="disabled", fg_color="gray", command=self.accept_new_user)
-        self.check.grid(row=(self.new_row + 4), column=1, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.check.grid(row=(self.new_row + 6), column=1, columnspan=2, sticky="ew", padx=10, pady=10)
         
         #why i chose focus out instead of key release and how this works
         self.fname.bind("<FocusOut>", lambda event: self.valid_name(self.fname, self.lbl1, self.valid_first))
         self.lname.bind("<FocusOut>", lambda event: self.valid_name(self.lname, self.lbl2, self.valid_last))
+        self.address.bind("<FocusOut>", lambda event: self.valid_address())
         self.email.bind("<FocusOut>", lambda event: self.valid_email())
         self.phone.bind("<FocusOut>", lambda event: self.valid_number())
         self.username.bind("<FocusOut>", lambda event: self.valid_username())
@@ -1023,6 +1092,19 @@ class SignupWindow(ctk.CTkToplevel):
                 
 
             self.update_check_button()
+
+    def valid_address(self):
+        address_entry = self.address.get().strip()
+
+        if not address_entry:
+            self.lbl20.configure(text="ADDRESS REQUIRED", text_color="red")
+            self.valid_address_var.set(False)
+        else:
+            self.lbl20.configure(text="Address", text_color="gray")
+            self.new_member["address"] = address_entry
+            self.valid_address_var.set(True)
+
+        self.update_check_button()
 
 
     def valid_email(self):
@@ -1126,7 +1208,7 @@ class SignupWindow(ctk.CTkToplevel):
 
         else:
             for position, rule in enumerate(self.password_rules):
-                rule.grid(row=position + 12, column=1, columnspan=2, padx=10, sticky="w")
+                rule.grid(row=position + 14, column=1, columnspan=2, padx=10, sticky="w")
 
             self.lbl6.configure(text="INVALID PASSWORD", text_color="red")
             self.valid_pass.set(False)
@@ -1136,13 +1218,13 @@ class SignupWindow(ctk.CTkToplevel):
     
     def valid_trader(self):
         if self.check_trader.get() == "on":
-            self.geometry("320x730")
+            self.geometry("320x850")
             self.discount.grid(row=(self.new_row + 1), column=1, sticky="w", padx=10, columnspan=2)
             self.company.grid(row=(self.new_row + 2), column=1, sticky="w", padx=10)
             self.company_name.grid(row=(self.new_row + 3), column=1, columnspan=2, sticky="ew", padx=10)
         
         elif self.check_trader.get() == "off":
-            self.geometry("320x650")
+            self.geometry("320x700")
             self.discount.grid_forget()
             self.company.grid_forget()
             self.company_name.grid_forget()
@@ -1173,6 +1255,7 @@ class SignupWindow(ctk.CTkToplevel):
             self.valid_first.get(),
             self.valid_last.get(),
             self.valid_email_var.get(),
+            self.valid_address_var.get(),
             self.valid_phone.get(),
             self.valid_user.get(),
             self.valid_pass.get(),
@@ -1208,6 +1291,7 @@ class SignupWindow(ctk.CTkToplevel):
                 "first": self.fname.get().strip().capitalize(),
                 "last": self.lname.get().strip().capitalize(),
             },
+            "address": self.address.get().strip(),
             "email": self.email.get().strip(),
             "phone": f"{self.area_dropdown.get()} {self.phone.get().strip()}",
             "username": self.username.get().strip(),
@@ -1230,6 +1314,7 @@ class SignupWindow(ctk.CTkToplevel):
                 "last": self.lname.get().capitalize()
             }
 
+            self.new_member["address"] = self.address.get()
             self.new_member["email"] = self.email.get()
 
             area = self.area_dropdown.get()
@@ -1328,6 +1413,177 @@ class AccountWindow(ctk.CTkToplevel):
         SignupWindow(root, members, username=username, layout=layout)
         self.destroy()
        
+class AdminWindow():
+    def __init__(self, root, members, layout):
+        self.root = root
+        self.members = members
+        self.layout = layout
+
+        self.password_check()
+
+    def password_check(self):
+        password_window = ctk.CTkToplevel(self.root)
+        password_window.title("Admin Password")
+        password_window.geometry("300x150")
+
+        self.lbl1 = ctk.CTkLabel(password_window, text="Enter Password", font=("Arial", 14, "bold"))
+        self.lbl1.grid(pady=(10, 0), padx=10, column=0, columnspan=2, sticky="w")
+
+        self.password_entry = ctk.CTkEntry(password_window, width=280, placeholder_text="Password", show="*")
+        self.password_entry.grid(pady=5, padx=10, column=0, columnspan=2, sticky="ew")
+
+        self.submit_btn = ctk.CTkButton(password_window, width=280, text="Submit", command=lambda: self.check_password(password_window))
+        self.submit_btn.grid(pady=(5, 10), padx=10, column=0, columnspan=2, sticky="ew")
+
+    def check_password(self, password_window):
+        if self.password_entry.get() == "123456":
+            self.create_admin_panel()
+            password_window.destroy()
+
+        else: 
+            self.lbl1.configure(text="Incorrect Password", text_color="red")
+
+    def create_admin_panel(self):
+        self.admin_window = ctk.CTkToplevel(self.root)
+        self.admin_window.title("Admin Panel")
+        self.admin_window.geometry("300x150")
+
+        self.admin_window.columnconfigure(0, weight=1)
+
+        self.lbl1 = ctk.CTkLabel(self.admin_window, text="Admin Panel", font=("Arial", 20, "bold"))
+        self.lbl1.grid(row=0, column=0, columnspan=2, pady=10)
+
+        self.view_members_btn = ctk.CTkButton(self.admin_window, text="View Members", command=self.view_members)
+        self.view_members_btn.grid(row=1, column=0, columnspan=2, pady=10)
+
+        self.view_purchaces_btn = ctk.CTkButton(self.admin_window, text="View Purchaces", command=self.view_purchaces)
+        self.view_purchaces_btn.grid(row=2, column=0, columnspan=2, pady=10)
+
+    def view_members(self):
+        members_window = ctk.CTkToplevel(self.admin_window)
+        members_window.title("Members List")
+        members_window.geometry("400x300")
+
+        members_listbox = ctk.CTkScrollableFrame(members_window)
+        members_listbox.pack(fill="both", expand=True)
+
+        for member in self.members:
+            member_info = f"{member['name']['first']} {member['name']['last']} - {member['username']}"
+            member_label = ctk.CTkLabel(members_listbox, text=member_info)
+            member_label.pack(anchor="w", padx=10, pady=5)
+    
+    def view_purchaces(self, purchaces=purchaces):
+        purchaces_window = ctk.CTkToplevel(self.admin_window)
+        purchaces_window.title("Purchaces List")
+        purchaces_window.geometry("500x300")
+
+        purchaces_window.rowconfigure(0, weight=1)
+        purchaces_window.columnconfigure(0, weight=1)
+
+        purchaces_listbox = ctk.CTkScrollableFrame(purchaces_window)
+        purchaces_listbox.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+
+        def save_quote(choices, username):
+            with open("QuoteHistory.txt", "a") as file:
+                file.write("\n")
+                file.write("========================================\n")
+                file.write(f"Quote for: {username}\n")
+                file.write(f"Address: {choices.get('address', '')}\n")
+                file.write(f"Date: {choices.get('date', '')}\n")
+                file.write(f"Quote Reference: {choices.get('code', '')}\n")
+                file.write("========================================\n")
+
+                for category, items in choices.items():
+
+                    if category in ["address", "date", "code", "total_price"]:
+                        continue
+
+                    for item in items:
+
+                        if "text" in item:
+                            price = item["price"]
+                            file.write(
+                                f"{item['option']}: {item['text']} "
+                                f"({category}) - ${price:,.2f}\n"
+                            )
+
+                        elif "value" in item:
+                            price = item["value"] * item["price"]
+                            file.write(
+                                f"{item['value']} x {item['name']} "
+                                f"({category}) - ${price:,.2f}\n"
+                            )
+
+                file.write("----------------------------------------\n")
+                file.write(
+                    f"Total Price: ${choices.get('total_price', 0):,.2f}\n"
+                )
+                file.write("========================================\n")
+
+        row = 0
+        for username, purchaces in purchaces.items():
+            user_lbl = ctk.CTkLabel(purchaces_listbox, text=f"----- User: {username} -----", font=("Arial", 24, "bold"))
+            user_lbl.grid(column=0, row=row, columnspan=2, padx=10, pady=(10, 0))
+            row += 1
+
+            for house, choices in enumerate(purchaces, start=1):
+                address = choices.get("address", "")
+                date = choices.get("date", "")
+                house_code = choices.get("code", "")
+
+                house_lbl = ctk.CTkLabel(purchaces_listbox, text=f"Address: {address} | Code: {house_code} | Date: {date}", font=("Arial", 14))
+                house_lbl.grid(row=row, column=0, columnspan=2, sticky="w", padx=10, pady=(10, 0))
+
+                row += 1
+                
+                for category, items in choices.items():
+                    if category in ["address", "date", "code", "total_price"]:
+                        continue
+
+                    for item in items:
+                        if "text" in item:
+                            item_info = f"{item['option']}: {item['text']} ({category})"
+                            item_price = f"${item['price']:.2f}"
+                        elif "value" in item:
+                            item_info = f"{item['value']} x {item['name']} ({category})"
+                            item_price = f"${item['value'] * item['price']:.2f}"
+                        else:
+                            continue
+
+                        item_lbl = ctk.CTkLabel(purchaces_listbox, text=item_info)
+                        item_lbl.grid(sticky="w", row=row, column=0, padx=10)
+
+                        item_price_lbl = ctk.CTkLabel(purchaces_listbox, text=item_price)
+                        item_price_lbl.grid(sticky="e", row=row, column=1, padx=10)
+
+                        row += 1
+
+                without_gst = choices.get("total_price", 0) - (choices.get("total_price", 0) * 0.15)
+                without_gst_lbl = ctk.CTkLabel(purchaces_listbox, text=f"Before GST")
+                without_gst_lbl.grid(sticky="w", row=row, column=0, columnspan=2, padx=10, pady=(0, 10))
+
+                without_gst_value = ctk.CTkLabel(purchaces_listbox, text=f"${without_gst:,.2f}")
+                without_gst_value.grid(sticky="e", row=row, column=1, padx=10, pady=(0, 10))
+
+                row += 1
+
+                line = ctk.CTkLabel(purchaces_listbox, text="------------------------------------------------------------------------")
+                line.grid(sticky="ew", row=row, column=0, columnspan=2, padx=10, pady=(0, 10))
+                
+                row += 1
+
+                total_price_lbl = ctk.CTkLabel(purchaces_listbox, text=f"Total Price")
+                total_price_lbl.grid(sticky="w", row=row, column=0, columnspan=2, padx=10, pady=(0, 10))
+
+                total_price_value = ctk.CTkLabel(purchaces_listbox, text=f"${choices.get('total_price', 0):,.2f}")
+                total_price_value.grid(sticky="e", row=row, column=1, padx=10, pady=(0, 10))
+
+                row += 1 
+
+                btn_quote_save = ctk.CTkButton(purchaces_listbox, text="Save Quote", command=lambda choices=choices, username=username: save_quote(choices, username))
+                btn_quote_save.grid(row=row, column=0, columnspan=2, padx=10, pady=(0, 10))
+                
+                row += 1
 
 
 class ReceiptsWindow(ctk.CTkToplevel):
@@ -1359,10 +1615,49 @@ class ReceiptsWindow(ctk.CTkToplevel):
 
 
         else:
+            def save_quote(choices, username):
+                with open("QuoteHistory.txt", "a") as file:
+                    file.write("\n")
+                    file.write("========================================\n")
+                    file.write(f"Quote for: {username}\n")
+                    file.write(f"Address: {choices.get('address', '')}\n")
+                    file.write(f"Date: {choices.get('date', '')}\n")
+                    file.write(f"Quote Reference: {choices.get('code', '')}\n")
+                    file.write("========================================\n")
+
+                    for category, items in choices.items():
+
+                        if category in ["address", "date", "code", "total_price"]:
+                            continue
+
+                        for item in items:
+
+                            if "text" in item:
+                                price = item["price"]
+                                file.write(
+                                    f"{item['option']}: {item['text']} "
+                                    f"({category}) - ${price:,.2f}\n"
+                                )
+
+                            elif "value" in item:
+                                price = item["value"] * item["price"]
+                                file.write(
+                                    f"{item['value']} x {item['name']} "
+                                    f"({category}) - ${price:,.2f}\n"
+                                )
+
+                    file.write("----------------------------------------\n")
+                    file.write(
+                        f"Total Price: ${choices.get('total_price', 0):,.2f}\n"
+                    )
+                    file.write("========================================\n")
             row = 0
             for house, choices in enumerate(self.purchaces[signed_in_user], start=1):
+                character_pool = string.ascii_lowercase + string.digits
+                random_characters = choices.get("code", "".join(random.choices(character_pool, k=6)))
+                date = choices.get("date", "")
 
-                self.title = ctk.CTkLabel(self.scroll_rec, text=f"------- Receipt No.{house} -------")
+                self.title = ctk.CTkLabel(self.scroll_rec, text=f"------- Receipt Reference {random_characters} ({date})-------")
                 self.title.grid(sticky="new", row=row, columnspan=2)
 
                 row += 1
@@ -1378,6 +1673,9 @@ class ReceiptsWindow(ctk.CTkToplevel):
                 total_price = 75000
 
                 for category, items in choices.items():
+
+                    if category in ["address", "date", "code", "total_price"]:
+                        continue
 
                     for item in items:
                         if "text" in item:
@@ -1435,6 +1733,14 @@ class ReceiptsWindow(ctk.CTkToplevel):
                         break
                 total_price -= 140
 
+                gst_bf = ctk.CTkLabel(self.scroll_rec, text="Before GST")
+                gst_bf.grid(row=row, column=0, sticky="w", padx=10)
+
+                gst_price = ctk.CTkLabel(self.scroll_rec, text=f"${total_price:,.2f}")
+                gst_price.grid(row=row, column=1, sticky="e", padx=10)
+
+                row += 1
+
                 gst_line = ctk.CTkLabel(self.scroll_rec, text="GST (15%)")
                 gst_line.grid(row=row, column=0, sticky="w", padx=10)
 
@@ -1457,10 +1763,15 @@ class ReceiptsWindow(ctk.CTkToplevel):
                 lbl_total_price = ctk.CTkLabel(self.scroll_rec, text=f"${total_price:,.2f}")
                 lbl_total_price.grid(row=row, column=1, sticky="e", padx=10, pady=(0, 10))
 
-                row +=1
+                purchaces[signed_in_user][house - 1]["total_price"] = total_price
 
-                cancel_btn = ctk.CTkButton(self.scroll_rec, text=f"Cancel Order No.{house}", command=lambda house=house: self.cancel_order(house))
-                cancel_btn.grid(row=row, column=0, columnspan=2, pady=(0, 20))
+                row += 1
+
+                quote_btn = ctk.CTkButton(self.scroll_rec, text="Save Quote", command=lambda choices=choices: save_quote(choices, signed_in_user))
+                quote_btn.grid(row=row, sticky="w", column=0, padx=5, pady=(0, 20))
+
+                cancel_btn = ctk.CTkButton(self.scroll_rec, text=f"Cancel Order {random_characters}", command=lambda house=house: self.cancel_order(house))
+                cancel_btn.grid(row=row, column=0, sticky="e",padx=5, pady=(0, 20))
 
                 row += 2
     def cancel_order(self, house):
