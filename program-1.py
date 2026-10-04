@@ -441,11 +441,12 @@ class Layout():
         self.members = members
 
         self.root.title("Waimak Builders Co")
-        self.root.geometry("1000x900")
-        self.root.configure(fg_color="white")
+        self.root.geometry("980x600")
+        self.root.configure(fg_color="#ededed")
 
-        self.scroll_frame = ctk.CTkScrollableFrame(self.root, fg_color="white", border_color="#FFD700")
-        self.scroll_frame.pack(expand=True, fill="both", padx=30, pady=10)
+        self.scroll_frame = ctk.CTkScrollableFrame(self.root, fg_color="#ededed")
+        self.scroll_frame.pack(expand=True, fill="both")
+        self.scroll_frame.columnconfigure(0, weight=1)
 
         self.card_index = 0
 
@@ -455,7 +456,7 @@ class Layout():
         self.private_frame.pack_forget()
 
         self.container = tk.Frame(self.private_frame, bg="white")
-        self.container.pack(expand=True, fill="both", padx=30, pady=30)
+        self.container.pack(expand=True, fill="both", pady=30)
         self.container.columnconfigure(0, weight=1)
         self.container.columnconfigure(1, weight=1)
 
@@ -467,7 +468,7 @@ class Layout():
         self.card_index = 0
         self.create_private_content()
 
-        self.purchace_btn = ctk.CTkButton(self.private_frame, text="Purchace", command=self.purchace)
+        self.purchace_btn = ctk.CTkButton(self.private_frame, text="Purchace", border_width=2, fg_color="#b86e6d", border_color="#ffd5d4", hover_color="#a06160", command=self.purchace)
         self.purchace_btn.pack(pady=(0, 20))
 
         lbl.pack_forget()
@@ -520,18 +521,20 @@ class Layout():
     def show_signed_in(self):
         self.signed_in = True
 
-        self.auth_buttons.place_forget()
-        self.user_buttons.place(relx=1.0, y=10, anchor="ne")
+        self.auth_buttons.grid_forget()
+        self.user_buttons.grid(row=0, column=0, sticky="e")
 
-        self.private_frame.pack(expand=True, fill="both")
+        self.private_frame.grid(row=2, column=0, sticky="nsew")
         lbl.pack(side="bottom", pady=10)
         self.total_price()
 
+
     def sign_out(self):
         self.signed_in = False
-        self.user_buttons.place_forget()
-        self.auth_buttons.place(relx=1.0, y=10, anchor="ne")
-        self.private_frame.pack_forget()
+        self.user_buttons.grid_forget()
+        self.auth_buttons.grid(row=0, column=0, sticky="e")
+
+        self.private_frame.grid_forget()
         lbl.pack_forget()
 
     def open_cart(self):
@@ -580,7 +583,7 @@ class Layout():
                 selections["kitchen"] = upgrades[0]
                 
                 for item in upgrades:
-                    option = ctk.CTkRadioButton(bottom, text=f"{item["text"]} (${item["price"]})", text_color="black", variable=var, value=item["option"], command=radio_ticked)
+                    option = ctk.CTkRadioButton(bottom, text=f"{item["text"]} (${item["price"]})", text_color="white", fg_color="#b86e6d", border_color="#ffd5d4", hover_color="#a06160", variable=var, value=item["option"], command=radio_ticked)
                     option.pack(anchor="w", padx=20, pady=2)
 
             else:
@@ -588,7 +591,7 @@ class Layout():
                     var = tk.BooleanVar(value=False)
                     self.check_vars.append(var)
 
-                    option = ctk.CTkCheckBox(bottom, text=f"{item["text"]} (${item["price"]})", text_color="black", variable=var, command=lambda item=item, var=var: self.checkbox_ticked(item, var))
+                    option = ctk.CTkCheckBox(bottom, text=f"{item["text"]} (${item["price"]})", text_color="white", fg_color="#b86e6d", border_color="#ffd5d4", hover_color="#a06160", variable=var, command=lambda item=item, var=var: self.checkbox_ticked(item, var))
                     option.pack(anchor="w", padx=20, pady=2)
 
         self.create_int_card(ADDITIONS)
@@ -608,13 +611,11 @@ class Layout():
         errormsg.geometry("350x200")
         errormsg.configure(fg_color="white")
 
-        title = ctk.CTkLabel(errormsg, text="About", text_color="#033805", font=("Georgia", 24, "bold"))
+        title = ctk.CTkLabel(errormsg, text="About", text_color="#595f52", font=("Georgia", 24, "bold"))
         title.pack(anchor="center", pady=20)
         
         description = ctk.CTkLabel(errormsg, text="The Waimak Build Co is a local company that supply a range of flatpack houses to the building trade and to retail customers. These are supplied as a kit that the customer then assembles themselves. The kit offers limited scope for customisation, to keep the cost as low as possible.", text_color="black", justify="center", wraplength=280)
         description.pack(anchor="center", padx=10)
-
-        
 
     
     def open_signin(self):
@@ -624,64 +625,63 @@ class Layout():
         SignupWindow(self.root, members)
 
     def create_card(self):
-        banner = ctk.CTkFrame(self.scroll_frame, fg_color="white", height=400)
-        banner.pack(fill="x", padx=30, pady=(0,10))
-        banner.pack_propagate(False)
 
-        title = ctk.CTkLabel(banner, text="Waimak Builders Co", text_color="#033805", font=("Georgia", 44, "bold"))
-        title.pack(expand=True)
+        act_banner = ctk.CTkFrame(self.scroll_frame, fg_color="#595f52", height=20)
+        act_banner.grid(row=0, column=0, sticky="ew")
+        act_banner.columnconfigure(0, weight=1)
 
-        self.auth_buttons = ctk.CTkFrame(banner, fg_color="transparent")
-        self.auth_buttons.place(relx=1.0, y=10, anchor="ne")
+        banner = ctk.CTkFrame(self.scroll_frame, fg_color="#ededed", height=600)
+        banner.grid(row=1, column=0, sticky="ew", pady=(0, 10), padx=10)
+        banner.columnconfigure(0, weight=1)
+        banner.columnconfigure(1, weight=1)
 
-        self.signin_btn = ctk.CTkButton(self.auth_buttons, text="Sign In", command=self.open_signin)
-        self.signin_btn.pack(side="right", padx=5, pady=5)
+        title = ctk.CTkLabel(banner, text="Waimak Builders Co", text_color="#595f52", justify="left", font=("Georgia", 60, "bold"), wraplength=500)
+        title.grid(row=1, column=0, sticky="w")
 
-        self.signup_btn = ctk.CTkButton(self.auth_buttons, text="Sign Up", command=self.on_click)
-        self.signup_btn.pack(side="right", padx=5, pady=5)
+        self.auth_buttons = ctk.CTkFrame(act_banner, fg_color="transparent")
+        self.auth_buttons.grid(row=0, column=0, sticky="e")
 
-        self.about_btn = ctk.CTkButton(self.auth_buttons, text="About", command=self.show_about)
-        self.about_btn.pack(side="right", padx=5, pady=5)
+        self.signin_btn = ctk.CTkButton(self.auth_buttons, text="Sign In", command=self.open_signin, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
+        self.signin_btn.grid(row=0, padx=5, pady=5, column=3)
 
-        self.user_buttons = ctk.CTkFrame(banner, fg_color="transparent")
-        self.user_buttons.pack_forget()
+        self.signup_btn = ctk.CTkButton(self.auth_buttons, text="Sign Up", command=self.on_click, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
+        self.signup_btn.grid(row=0, padx=5, pady=5, column=4)
 
-        self.cart_btn = ctk.CTkButton(self.user_buttons, text="Receipts", command=self.open_cart)
-        self.cart_btn.pack(side="left", padx=5)
+        self.about_btn = ctk.CTkButton(self.auth_buttons, text="About", command=self.show_about, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
+        self.about_btn.grid(row=0, padx=5, pady=5, column=2)
 
-        self.account_btn = ctk.CTkButton(self.user_buttons, text="Account", command=self.open_account)
-        self.account_btn.pack(side="right", padx=5)
+        self.user_buttons = ctk.CTkFrame(act_banner, fg_color="transparent")
+        self.user_buttons.grid(row=0, column=0, sticky="e")
 
-        self.signout_btn = ctk.CTkButton(self.user_buttons, text="Sign Out", command=self.sign_out)
-        self.signout_btn.pack(side="right", padx=5)
+        self.user_buttons.grid_forget()
 
-        self.about_btn = ctk.CTkButton(self.user_buttons, text="About", command=self.show_about)
-        self.about_btn.pack(side="right", padx=5, pady=5)
+        self.cart_btn = ctk.CTkButton(self.user_buttons, text="Receipts", command=self.open_cart, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
+        self.cart_btn.grid(column=2,row=0)
 
-        top_border = ctk.CTkFrame(self.scroll_frame, height=2, fg_color="#FFD700")
-        top_border.pack(side="top", fill="x")
+        self.account_btn = ctk.CTkButton(self.user_buttons, text="Account", command=self.open_account, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
+        self.account_btn.grid(row=0, padx=5, column=4)
 
-        default_bar = ctk.CTkFrame(self.scroll_frame, fg_color="white")
-        default_bar.pack(fill="x", pady=(0,10))
-        default_bar.pack_propagate(False)
+        self.signout_btn = ctk.CTkButton(self.user_buttons, text="Sign Out", command=self.sign_out, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
+        self.signout_btn.grid(row=0, padx=5, column=5)
 
-        top_border2 = ctk.CTkFrame(self.scroll_frame, height=2, fg_color="#FFD700")
-        top_border2.pack(side="top", fill="x")
+        self.about_btn = ctk.CTkButton(self.user_buttons, text="About", command=self.show_about, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
+        self.about_btn.grid(row=0, padx=5, pady=5, column=3)
 
-        d_settings = ctk.CTkLabel(default_bar, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="black", justify="left", wraplength=300)
-        d_settings.grid(row=0, column=0, pady=30, padx=30)
+        d_settings = ctk.CTkLabel(banner, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="black", justify="left", wraplength=500)
+        d_settings.grid(row=2, column=0, sticky="nw")
 
         #talk about garbage collecting 
 
-        img1 = ctk.CTkImage(light_image=Image.open("house.png"), dark_image=Image.open("house.png"), size=(220, 150))
-        d_img1 = ctk.CTkLabel(default_bar, image=img1, text="")
-        d_img1.grid(row=0, column=1, pady=10, padx=10)
+        img1 = ctk.CTkImage(light_image=Image.open("house.png"), dark_image=Image.open("house.png"), size=(350, 250))
+        d_img1 = ctk.CTkLabel(banner, image=img1, text="")
+        d_img1.grid(column=1, row=1, pady=10, sticky="e")
 
-        img2 = ctk.CTkImage(light_image=Image.open("floorplan.png"), dark_image=Image.open("floorplan.png"), size=(220, 150))
-        d_img2 = ctk.CTkLabel(default_bar, image=img2, text="")
-        d_img2.grid(row=0, column=2, pady=10, padx=10)
+        img2 = ctk.CTkImage(light_image=Image.open("floorplan.png"), dark_image=Image.open("floorplan.png"), size=(350, 250))
+        d_img2 = ctk.CTkLabel(banner, image=img2, text="")
+        d_img2.grid(column=1, row=2, pady=10, sticky="e")
 
         self.default_images = [img1, img2]
+
 
 
     def create_layout(self, container, card_type):
@@ -694,7 +694,7 @@ class Layout():
             "Network Points": "new work pts.jpg",
         }
 
-        card = ctk.CTkFrame(container, fg_color="white", border_width=2, border_color="#FFD700", corner_radius=18)
+        card = ctk.CTkFrame(container, fg_color="white", border_width=2, border_color="#ffd5d4", corner_radius=18)
 
         path = image_paths.get(card_type)
         if path:
@@ -708,10 +708,10 @@ class Layout():
                 self.images = []
             self.images.append(img)
             
-        bottom = ctk.CTkFrame(card, fg_color="#ededed")
+        bottom = ctk.CTkFrame(card, fg_color="#595f52")
         bottom.pack(fill="both", expand=True, padx=12, pady=12)
 
-        title = ctk.CTkLabel(bottom, text=card_type.upper(), text_color="#033805", font=("Georgia", 18, "bold"))
+        title = ctk.CTkLabel(bottom, text=card_type.upper(), text_color="white", font=("Georgia", 18, "bold"))
         title.pack(anchor="w", padx=15, pady=10)
 
         return card, bottom
@@ -730,10 +730,10 @@ class Layout():
             card_index +=1
 
             if key == "Sockets":
-                lbl = ctk.CTkLabel(bottom, text="The maximum number of extra sockets in the build is 12 (1G + 2G total)", text_color="black", justify="left", wraplength=350)
+                lbl = ctk.CTkLabel(bottom, text="The maximum number of extra sockets in the build is 12 (1G + 2G total)", text_color="white", justify="left", wraplength=350)
                 lbl.pack(anchor="w", padx=10)
             elif key == "Network Points":
-                lbl = ctk.CTkLabel(bottom, text="Requires the addition of a loft mounted 8 port 10/100/1000 network switch ($100)", text_color="black", justify="left", wraplength=350)
+                lbl = ctk.CTkLabel(bottom, text="Requires the addition of a loft mounted 8 port 10/100/1000 network switch ($100)", text_color="white", justify="left", wraplength=350)
                 lbl.pack(anchor="w", padx=10)
 
             for item in values:
@@ -745,18 +745,18 @@ class Layout():
                 sub_value = item["value"]
                 price = item["price"]
 
-                key_label = ctk.CTkLabel(controls, text=f"{sub_key} (${price})", text_color="black")
+                key_label = ctk.CTkLabel(controls, text=f"{sub_key} (${price})", text_color="white")
                 key_label.pack(side="left", padx=10)
 
-                value_label = ctk.CTkLabel(controls, text=str(sub_value), text_color="black")
+                value_label = ctk.CTkLabel(controls, text=str(sub_value), text_color="white")
                 value_label.pack(side="left", padx=10)
 
                 self.value_labels.append((item, value_label))
 
-                plus_btn = ctk.CTkButton(controls, text="+", height=10, width=10, corner_radius=50, command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
+                plus_btn = ctk.CTkButton(controls, text="+", height=10, width=10, corner_radius=50, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d", command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
                 plus_btn.pack(side="left", padx=10, pady=5)
 
-                minus_btn = ctk.CTkButton(controls, text="-", height=10, width=10, corner_radius=50, command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
+                minus_btn = ctk.CTkButton(controls, text="-", height=10, width=10, corner_radius=50, fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d", command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
                 minus_btn.pack(side="left", padx=10, pady=5)
 
         self.card_index = card_index
@@ -1434,6 +1434,17 @@ class ReceiptsWindow(ctk.CTkToplevel):
 
                         break
                 total_price -= 140
+
+                gst_line = ctk.CTkLabel(self.scroll_rec, text="GST (15%)")
+                gst_line.grid(row=row, column=0, sticky="w", padx=10)
+
+                gst = total_price * 0.15
+                total_price += gst
+
+                gst_price = ctk.CTkLabel(self.scroll_rec, text=f"${gst:,.2f}")
+                gst_price.grid(row=row, column=1, sticky="e", padx=10)
+
+                row += 1
 
                 lbl_line = ctk.CTkLabel(self.scroll_rec, text="----------------------------------------------------------------------")
                 lbl_line.grid(row=row, column=0, columnspan=2, sticky="new", padx=10)
