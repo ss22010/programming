@@ -465,7 +465,7 @@ class Layout():
         self.members = members
 
         self.root.title("Waimak Builders Co")
-        self.root.geometry("980x600")
+        self.root.geometry("980x620")
         self.root.configure(fg_color="#ededed")
 
         self.scroll_frame = ctk.CTkScrollableFrame(
@@ -506,7 +506,13 @@ class Layout():
                                           fg_color="#b86e6d", border_color="#ffd5d4", hover_color="#a06160", width=300, command=self.purchace)
         self.purchace_btn.pack(pady=(0, 20))
 
-        lbl.pack_forget()
+        self.window_footer = ctk.CTkFrame(
+            self.root, fg_color="#cccccc", height=30)
+        self.window_footer.pack(side="bottom", anchor="s", fill="x")
+
+        self.company_details = ctk.CTkLabel(
+            self.window_footer, text="Waimak Build Co Ltd | Unit 3, 93 McKenzie Street, Rangiora, North Canterbury | Tel: 03 1234567 | Email:Office@wbc.co.nz", text_color="white")
+        self.company_details.pack(anchor="s")
 
     def purchace(self):
         purchace = {}
@@ -666,15 +672,27 @@ class Layout():
 
         errormsg = ctk.CTkToplevel(self.root)
         errormsg.title("ABOUT")
-        errormsg.geometry("350x200")
+        errormsg.geometry("350x250")
         errormsg.configure(fg_color="white")
 
         title = ctk.CTkLabel(errormsg, text="About",
                              text_color="#595f52", font=("Georgia", 24, "bold"))
         title.pack(anchor="center", pady=20)
 
-        description = ctk.CTkLabel(errormsg, text="The Waimak Build Co is a local company that supply a range of flatpack houses to the building trade and to retail customers. These are supplied as a kit that the customer then assembles themselves. The kit offers limited scope for customisation, to keep the cost as low as possible.", text_color="black", justify="center", wraplength=280)
+        description = ctk.CTkLabel(errormsg, text="The Waimak Build Co is a local company that supply a range of flatpack houses to the building trade and to retail customers. " \
+            "These are supplied as a kit that the customer then assembles themselves. " \
+            "The kit offers limited scope for customisation, to keep the cost as low as possible.", 
+            text_color="black", justify="center", wraplength=280)
         description.pack(anchor="center", padx=10)
+
+        self.window_footer = ctk.CTkFrame(
+            errormsg, fg_color="#cccccc", height=30)
+        self.window_footer.pack(side="bottom", anchor="s", fill="x")
+
+        self.company_details = ctk.CTkLabel(
+            self.window_footer, text="Waimak Build Co Ltd | Unit 3, 93 McKenzie Street, Rangiora, North Canterbury"
+            " | Tel: 03 1234567 | Email:Office@wbc.co.nz", text_color="white", font=("arial", 10), wraplength=300)
+        self.company_details.pack(anchor="s")
 
     def open_admin(self):
         AdminWindow(self.root, members, self)
@@ -742,7 +760,10 @@ class Layout():
                                        fg_color="transparent", border_width=2, border_color="#ffd5d4", hover_color="#b86e6d")
         self.about_btn.grid(row=0, padx=5, pady=5, column=3)
 
-        d_settings = ctk.CTkLabel(banner, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="black", justify="left", wraplength=500)
+        d_settings = ctk.CTkLabel(banner, text="The basic kit costs $75,000 inclusive of taxes and delivery, and measures 8m x 8m. " \
+            "It includes a basic but functional bathroom, 2 bedrooms, a ‘standard’ fitted kitchen with space for a washing machine or dishwasher and a living room. " \
+            "All windows are double glazed, walls, floor and loft insulated to NZ standards. All rooms come with 1 double electrical socket as standard.", text_color="black", 
+            justify="left", wraplength=500)
         d_settings.grid(row=2, column=0, sticky="nw")
 
         # talk about garbage collecting
@@ -809,7 +830,8 @@ class Layout():
             card_index += 1
 
             if key == "Sockets":
-                lbl = ctk.CTkLabel(bottom, text="The maximum number of extra sockets in the build is 12 (1G + 2G total)",
+                lbl = ctk.CTkLabel(bottom, text="The maximum number of extra sockets in the build is 12 (1G + 2G total). " \
+                    "The maximum number of extra sockets in a room is 4",
                                    text_color="white", justify="left", wraplength=350)
                 lbl.pack(anchor="w", padx=10)
             elif key == "Network Points":
@@ -843,11 +865,13 @@ class Layout():
                 self.value_labels.append((item, value_label))
 
                 plus_btn = ctk.CTkButton(button_frame, text="+", height=10, width=10, corner_radius=50, fg_color="transparent", border_width=2,
-                                         border_color="#ffd5d4", hover_color="#b86e6d", command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
+                                         border_color="#ffd5d4", hover_color="#b86e6d", 
+                                         command=lambda item=item, vlabel=value_label: self.plus_btn_action(item, vlabel))
                 plus_btn.pack(side="left", padx=10, pady=5)
 
                 minus_btn = ctk.CTkButton(button_frame, text="-", height=10, width=10, corner_radius=50, fg_color="transparent", border_width=2,
-                                          border_color="#ffd5d4", hover_color="#b86e6d", command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
+                                          border_color="#ffd5d4", hover_color="#b86e6d", 
+                                          command=lambda item=item, vlabel=value_label: self.minus_btn_action(item, vlabel))
                 minus_btn.pack(side="left", padx=10, pady=5)
 
         self.card_index = card_index
@@ -995,6 +1019,7 @@ class SignupWindow(ctk.CTkToplevel):
 
         self.valid_name(self.fname, self.lbl1, self.valid_first)
         self.valid_name(self.lname, self.lbl2, self.valid_last)
+        self.valid_address()
         self.valid_email()
         self.valid_number()
 
@@ -1316,6 +1341,7 @@ class SignupWindow(ctk.CTkToplevel):
 
     def open_msg(self, editing_member):
         errormsg = ctk.CTkToplevel(self.master)
+        errormsg.geometry("300x50")
         errormsg.title("Success")
 
         if editing_member == None:
@@ -1425,6 +1451,7 @@ class SigninWindow(ctk.CTkToplevel):
             self.layout.show_signed_in()
 
             errormsg = ctk.CTkToplevel(self.master)
+            errormsg.geometry("300x50")
             errormsg.title("Success")
 
             error_lbl = ctk.CTkLabel(
@@ -1437,6 +1464,7 @@ class SigninWindow(ctk.CTkToplevel):
 
         else:
             errormsg = ctk.CTkToplevel(self.master)
+            errormsg.geometry("300x50")
             errormsg.title("Unsuccessful")
 
             error_lbl = ctk.CTkLabel(
@@ -1584,6 +1612,8 @@ class AdminWindow():
                 file.write(
                     f"Total Price: ${choices.get('total_price', 0):,.2f}\n"
                 )
+                file.write("Waimak Build Co Ltd | Unit 3, 93 McKenzie Street, Rangiora, North Canterbury | Tel: 03 1234567 | Email:Office@wbc.co.nz\n")
+    
                 file.write("========================================\n")
 
         row = 0
@@ -1736,6 +1766,7 @@ class ReceiptsWindow(ctk.CTkToplevel):
                     file.write(
                         f"Total Price: ${choices.get('total_price', 0):,.2f}\n"
                     )
+                    file.write("Waimak Build Co Ltd | Unit 3, 93 McKenzie Street, Rangiora, North Canterbury | Tel: 03 1234567 | Email:Office@wbc.co.nz\n")
                     file.write("========================================\n")
             row = 0
             for house, choices in enumerate(self.purchaces[signed_in_user], start=1):
